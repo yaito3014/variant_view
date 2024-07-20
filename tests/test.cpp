@@ -19,7 +19,7 @@ int main() {  //
     [[maybe_unused]] auto view = yk::make_variant_view<A, B>(var);
 
     // [[maybe_unused]] auto subv = view.subview<A>();
-    yk::visit(yk::overloaded{[](C x) { std::puts("num num"); }}, view);
+    yk::visit(yk::overloaded{[](auto x) { std::puts("num num"); }}, view);
 
     std::cout << yk::holds_alternative<A>(var) << std::endl;
     std::cout << yk::holds_alternative<A>(view) << std::endl;

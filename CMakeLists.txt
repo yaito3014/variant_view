@@ -6,7 +6,6 @@ project(
   LANGUAGES CXX
 )
 
-
 add_library(variant_view INTERFACE)
 
 file(GLOB_RECURSE VARIANT_VIEW_HEADERS CONFIGURE_DEPENDS include/*.hpp)
@@ -44,5 +43,4 @@ install(
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
 )
 
-add_executable(test test.cpp)
-target_link_libraries(test PUBLIC variant_view)
+add_subdirectory(tests)
