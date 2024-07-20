@@ -20,6 +20,18 @@
 
 namespace yk {
 
+namespace detail {
+
+template <class... Ts>
+struct variant_param_list {};
+
+template <class T, class... Ts>
+struct variant_param_list<T, Ts...> {
+  using head = T;
+};
+
+}  // namespace detail
+
 template <class Variant, class... Ts>
 class variant_view {
 public:
@@ -80,11 +92,11 @@ namespace detail {
 
 template <class Visitor, class Variant, class... Ts>
 struct SupersetTypeCatcher {
-  using deduced_return_type = std::invoke_result_t<Visitor, std::tuple_element_t<0, std::tuple<Ts...>>>;
+  using deduced_return_type = std::invoke_result_t<Visitor, typename detail::variant_param_list<Ts...>::head>;
 
   Visitor vis;
   template <class T>
-  constexpr decltype(auto) operator()(T&& x) const {
+  constexpr deduced_return_type operator()(T&& x) const {
     return std::invoke(vis, std::forward<T>(x));
   }
 
