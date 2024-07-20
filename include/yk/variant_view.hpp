@@ -55,7 +55,7 @@ private:
 
 template <class... Ts, class Variant>
 [[nodiscard]] constexpr auto make_variant_view(Variant& variant) noexcept {
-  static_assert(detail::VariantLike<Variant>, "argument should be variant-like type");
+  static_assert(detail::VariantLike<std::remove_cvref_t<Variant>>, "argument should be variant-like type");
   return detail::make_variant_view_result_t<Variant, Ts...>{variant};
 }
 
