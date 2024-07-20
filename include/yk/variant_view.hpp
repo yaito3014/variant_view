@@ -18,9 +18,6 @@
 #include <type_traits>
 #include <utility>
 
-#include <boost/type_index.hpp>
-#include <iostream>
-
 namespace yk {
 
 template <class Variant, class... Ts>
