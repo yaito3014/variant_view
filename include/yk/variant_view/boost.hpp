@@ -35,7 +35,7 @@ template <class BoostVariant>
 using boost_variant_types_t = typename boost::mpl::fold<typename BoostVariant::types, type_list<>, to_type_list<boost::mpl::_1, boost::mpl::_2>>::type;
 
 template <class... Ts, class... Us, class T>
-struct is_subtype_in_variant_view<boost::variant<Ts...>, variant_view<Us...>, T> : std::disjunction<std::is_same<Us, T>...> {
+struct is_subtype_in_variant_view<boost::variant<Ts...>, variant_view<boost::variant<Ts...>, Us...>, T> : std::disjunction<std::is_same<Us, T>...> {
   static_assert(boost::mpl::contains<typename boost::variant<Ts...>::types, T>::type::value, "T must be in variant's template parameters");
 };
 
