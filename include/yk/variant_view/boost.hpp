@@ -8,7 +8,6 @@
 #include "yk/variant_view/detail/variant_view_traits.hpp"
 
 #include <boost/mpl/contains.hpp>
-#include <boost/mpl/unique.hpp>
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/variant.hpp>
 #include <type_traits>
