@@ -80,6 +80,8 @@ namespace detail {
 
 template <class Visitor, class Variant, class... Ts>
 struct SupersetTypeCatcher {
+  using deduced_return_type = std::invoke_result_t<Visitor, std::tuple_element_t<0, std::tuple<Ts...>>>;
+
   Visitor vis;
   template <class T>
   constexpr decltype(auto) operator()(T&& x) const {
@@ -88,7 +90,7 @@ struct SupersetTypeCatcher {
 
   template <class T>
     requires(!is_subtype_in_variant_view_v<Variant, variant_view<Variant, Ts...>, std::remove_cvref_t<T>>)
-  [[noreturn]] constexpr decltype(auto) operator()(T&&) const {
+  [[noreturn]] constexpr deduced_return_type operator()(T&&) const {
     throw std::bad_variant_access{};
   }
 };
