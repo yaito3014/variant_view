@@ -66,7 +66,7 @@ private:
 public:
   template <class Visitor, class Variant>
   static constexpr decltype(auto) apply(Visitor&& vis, Variant&& variant) {
-    return []<class... Us>(detail::type_list<Us...>) {
+    []<class... Us>(detail::type_list<Us...>) {
       static_assert(core::is_all_same_v<std::invoke_result_t<Visitor, Us>...>, "visitor must return same type for all possible parameters");
     }(detail::boost_variant_types_t<std::remove_cvref_t<Variant>>{});
     return boost::apply_visitor(std::forward<Visitor>(vis), std::forward<Variant>(variant));
