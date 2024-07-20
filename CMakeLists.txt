@@ -6,12 +6,17 @@ project(
   LANGUAGES CXX
 )
 
-file(GLOB_RECURSE VARIANT_VIEW_HEADERS CONFIGURE_DEPENDS include/*.hpp)
 
 add_library(variant_view INTERFACE)
 
-target_include_directories(variant_view INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+file(GLOB_RECURSE VARIANT_VIEW_HEADERS CONFIGURE_DEPENDS include/*.hpp)
 target_sources(variant_view INTERFACE FILE_SET HEADERS FILES ${VARIANT_VIEW_HEADERS})
+
+include(GNUInstallDirs)
+target_include_directories(
+  variant_view INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
 set_target_properties(
   variant_view
@@ -25,6 +30,19 @@ if(${Boost_FOUND})
   target_compile_definitions(variant_view INTERFACE YK_VARIANT_VIEW_INCLUDE_BOOST_BY_DEFAULT)
   target_link_libraries(variant_view INTERFACE Boost::headers)
 endif()
+
+install(
+  TARGETS variant_view
+  EXPORT variant_view_export
+  FILE_SET HEADERS
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+install(
+  EXPORT variant_view_export
+  FILE variant_viewTargets.cmake
+  NAMESPACE yk::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
+)
 
 add_executable(test test.cpp)
 target_link_libraries(test PUBLIC variant_view)
