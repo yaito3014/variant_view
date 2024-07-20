@@ -1,0 +1,30 @@
+cmake_minimum_required(VERSION 3.23)
+
+project(
+  variant_view
+  VERSION 0.1.0
+  LANGUAGES CXX
+)
+
+file(GLOB_RECURSE VARIANT_VIEW_HEADERS CONFIGURE_DEPENDS include/*.hpp)
+
+add_library(variant_view INTERFACE)
+
+target_include_directories(variant_view INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_sources(variant_view INTERFACE FILE_SET HEADERS FILES ${VARIANT_VIEW_HEADERS})
+
+set_target_properties(
+  variant_view
+  PROPERTIES CXX_STANDARD 20
+             CXX_STANDARD_REQUIRED ON
+             CXX_EXTENSIONS OFF
+)
+
+find_package(Boost CONFIG)
+if(${Boost_FOUND})
+  target_compile_definitions(variant_view INTERFACE YK_VARIANT_VIEW_INCLUDE_BOOST_BY_DEFAULT)
+  target_link_libraries(variant_view INTERFACE Boost::headers)
+endif()
+
+add_executable(test test.cpp)
+target_link_libraries(test PUBLIC variant_view)
