@@ -7,6 +7,7 @@
 #include "yk/variant/traits.hpp"
 #include "yk/variant_view/detail/variant_view_traits.hpp"
 
+#include <boost/mpl/contains.hpp>
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/variant.hpp>
 #include <type_traits>
@@ -15,7 +16,7 @@
 namespace yk {
 
 template <class... Ts, class T>
-struct is_in_variant<boost::variant<Ts...>, T> : std::disjunction<std::is_same<Ts, T>...> {};
+struct is_in_variant<boost::variant<Ts...>, T> : std::bool_constant<boost::mpl::contains<typename boost::variant<Ts...>::types, T>::type::value> {};
 
 namespace detail {
 
