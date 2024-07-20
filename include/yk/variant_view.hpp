@@ -89,7 +89,7 @@ struct SupersetTypeCatcher {
   }
 
   template <class T>
-    requires(!is_subtype_in_variant_view_v<Variant, variant_view<Variant, Ts...>, std::remove_cvref_t<T>>)
+    requires(!is_subtype_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Ts...>, std::remove_cvref_t<T>>)
   [[noreturn]] constexpr deduced_return_type operator()(T&&) const {
     throw std::bad_variant_access{};
   }

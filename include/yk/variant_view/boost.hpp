@@ -8,6 +8,7 @@
 #include "yk/variant_view/detail/variant_view_traits.hpp"
 
 #include <boost/mpl/contains.hpp>
+#include <boost/mpl/unique.hpp>
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/variant.hpp>
 #include <type_traits>
@@ -20,9 +21,23 @@ struct is_in_variant<boost::variant<Ts...>, T> : std::bool_constant<boost::mpl::
 
 namespace detail {
 
+template <class... Ts>
+struct type_list {};
+
+template <class T, class R>
+struct to_type_list;
+
+template <class... Ts, class X>
+struct to_type_list<type_list<Ts...>, X> {
+  using type = type_list<Ts..., X>;
+};
+
+template <class BoostVariant>
+using boost_variant_types_t = typename boost::mpl::fold<typename BoostVariant::types, type_list<>, to_type_list<boost::mpl::_1, boost::mpl::_2>>::type;
+
 template <class... Ts, class... Us, class T>
 struct is_subtype_in_variant_view<boost::variant<Ts...>, variant_view<Us...>, T> : std::disjunction<std::is_same<Us, T>...> {
-  static_assert((... || std::is_same_v<Ts, T>), "T must be in variant's template parameters");
+  static_assert(boost::mpl::contains<typename boost::variant<Ts...>::types, T>::type::value, "T must be in variant's template parameters");
 };
 
 template <class... Ts>
@@ -52,7 +67,9 @@ private:
 public:
   template <class Visitor, class Variant>
   static constexpr decltype(auto) apply(Visitor&& vis, Variant&& variant) {
-    static_assert(core::is_all_same_v<std::invoke_result_t<Visitor, Ts>...>, "visitor must return same type for all possible parameters");
+    return []<class... Us>(detail::type_list<Us...>) {
+      static_assert(core::is_all_same_v<std::invoke_result_t<Visitor, Us>...>, "visitor must return same type for all possible parameters");
+    }(detail::boost_variant_types_t<std::remove_cvref_t<Variant>>{});
     return boost::apply_visitor(std::forward<Visitor>(vis), std::forward<Variant>(variant));
   }
 
@@ -67,14 +84,18 @@ public:
 
 template <class T, class... Ts>
 [[nodiscard]] /* constexpr */ bool holds_alternative(const boost::variant<Ts...>& v) noexcept {
-  static_assert(core::exactly_once_v<T, Ts...>);
-  return core::find_type_index_v<T, Ts...> == v.which();
+  return [&]<class... Us>(detail::type_list<Us...>) {
+    static_assert(core::exactly_once_v<T, Us...>);
+    return core::find_type_index_v<T, Us...> == v.which();
+  }(detail::boost_variant_types_t<boost::variant<Ts...>>{});
 }
 
 template <class T, class... Ts, class... Us>
 [[nodiscard]] /* constexpr */ bool holds_alternative(const variant_view<boost::variant<Ts...>, Us...>& v) noexcept {
-  static_assert(core::exactly_once_v<T, Ts...>);
-  return core::find_type_index_v<T, Ts...> == v.base().which();
+  return [&]<class... Vs>(detail::type_list<Vs...>) {
+    static_assert(core::exactly_once_v<T, Vs...>);
+    return core::find_type_index_v<T, Vs...> == v.base().which();
+  }(detail::boost_variant_types_t<boost::variant<Ts...>>{});
 }
 
 }  // namespace yk
