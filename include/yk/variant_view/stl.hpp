@@ -21,6 +21,11 @@ template <class... Ts>
 struct variant_like<std::variant<Ts...>> : std::true_type {};
 
 template <class... Ts>
+struct make_variant_view_result<std::variant<Ts...>, Ts...> {
+  using type = variant_view<std::variant<Ts...>, Ts...>;
+};
+
+template <class... Ts>
 struct make_variant_view_result<std::variant<Ts...>> {
   using type = variant_view<std::variant<Ts...>, Ts...>;
 };
@@ -55,6 +60,12 @@ template <class T, class... Ts, class... Us>
 [[nodiscard]] constexpr bool holds_alternative(const variant_view<std::variant<Ts...>, Us...>& v) noexcept {
   return std::holds_alternative<T>(v.base());
 }
+
+template <class... Ts>
+variant_view(const std::variant<Ts...>&) -> variant_view<const std::variant<Ts...>, Ts...>;
+
+template <class... Ts>
+variant_view(std::variant<Ts...>&) -> variant_view<std::variant<Ts...>, Ts...>;
 
 }  // namespace yk
 

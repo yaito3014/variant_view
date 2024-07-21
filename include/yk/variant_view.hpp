@@ -36,17 +36,32 @@ template <class Variant, class... Ts>
 class variant_view {
 public:
   static_assert(sizeof...(Ts) > 0, "empty variant_view is not allowed");
+  static_assert(detail::VariantLike<std::remove_cvref_t<Variant>>, "argument should be variant-like type");
   static_assert((... && is_in_variant_v<std::remove_cvref_t<Variant>, Ts>), "variant_view must be subset of original variant");
 
   using variant_type = std::remove_const_t<Variant>;
 
-  explicit constexpr variant_view(Variant& variant) : base_(&variant) {}
+  constexpr variant_view() noexcept : base_(nullptr) {}
+
+  explicit constexpr variant_view(const variant_type& variant) noexcept
+    requires std::is_const_v<Variant>
+      : base_(&variant) {}
+
+  explicit constexpr variant_view(variant_type& variant) noexcept
+    requires(!std::is_const_v<Variant>)
+      : base_(&variant) {}
 
   [[nodiscard]] const variant_type& base() const noexcept { return *base_; }
   [[nodiscard]] variant_type& base() noexcept
     requires(!std::is_const_v<Variant>)
   {
     return *base_;
+  }
+
+  template <class... Us>
+    requires detail::is_subtypes_in_variant_view_v<std::remove_cvref_t<Variant>, variant_view<Variant, Us...>, Us...>
+  [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const {
+    return variant_view<const Variant, Us...>{*this};
   }
 
   template <class... Us>
@@ -67,7 +82,6 @@ private:
 
 template <class... Ts, class Variant>
 [[nodiscard]] constexpr auto make_variant_view(Variant& variant) noexcept {
-  static_assert(detail::VariantLike<std::remove_cvref_t<Variant>>, "argument should be variant-like type");
   return detail::make_variant_view_result_t<Variant, Ts...>{variant};
 }
 

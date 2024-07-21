@@ -43,8 +43,20 @@ template <class... Ts>
 struct variant_like<boost::variant<Ts...>> : std::true_type {};
 
 template <class... Ts>
-struct make_variant_view_result<boost::variant<Ts...>> {
+struct make_variant_view_result<boost::variant<Ts...>, Ts...> {
   using type = variant_view<boost::variant<Ts...>, Ts...>;
+};
+
+template <class... Ts>
+struct make_variant_view_result<boost::variant<Ts...>> {
+  template <class TypeList>
+  struct helper {};
+
+  template <class... Us>
+  struct helper<type_list<Us...>> {
+    using type = variant_view<boost::variant<Ts...>, Us...>;
+  };
+  using type = typename helper<boost_variant_types_t<boost::variant<Ts...>>>::type;
 };
 
 template <class Variant>
@@ -96,6 +108,12 @@ template <class T, class... Ts, class... Us>
     return core::find_type_index_v<T, Vs...> == v.base().which();
   }(detail::boost_variant_types_t<boost::variant<Ts...>>{});
 }
+
+// template <class... Ts>
+// variant_view(const boost::variant<Ts...>&) -> /* impossible due to boost::recursive_variant_ */;
+
+// template <class... Ts>
+// variant_view(boost::variant<Ts...>&) -> /* impossible due to boost::recursive_variant_ */;
 
 }  // namespace yk
 
