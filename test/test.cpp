@@ -28,8 +28,6 @@ using variant_t = std::tuple<std::variant<Ts...>, boost::variant<Ts...>>;
 
 #define YK_VARIANT(...) BOOST_IDENTITY_TYPE((variant_t<__VA_ARGS__>))
 
-#define YK_YAITO_TODO 0
-
 BOOST_AUTO_TEST_CASE_TEMPLATE(Initialization, Variant, YK_VARIANT(int, double)) {
   Variant v = 42;
 
