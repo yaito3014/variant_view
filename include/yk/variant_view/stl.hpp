@@ -13,7 +13,7 @@ namespace yk {
 namespace detail {
 
 template <class... Ts, class... Us, class T>
-struct is_subtype_in_variant_view<std::variant<Ts...>, variant_view<Us...>, T> : std::disjunction<std::is_same<Us, T>...> {
+struct is_subtype_in_variant_view<std::variant<Ts...>, variant_view<std::variant<Ts...>, Us...>, T> : std::disjunction<std::is_same<Us, T>...> {
   static_assert((... || std::is_same_v<Ts, T>), "T must be in variant's template parameters");
 };
 

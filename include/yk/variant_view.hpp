@@ -69,13 +69,13 @@ public:
   }
 
   template <class... Us>
-    requires detail::is_subtypes_in_variant_view_v<std::remove_cvref_t<Variant>, variant_view<Variant, Us...>, Us...>
-  [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const {
+    requires detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>>, Us...>,
+  Us... > [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const {
     return variant_view<const Variant, Us...>{*this};
   }
 
   template <class... Us>
-    requires detail::is_subtypes_in_variant_view_v<Variant, variant_view<Variant, Us...>, Us...>
+    requires detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Us...>, Us...>
   [[nodiscard]] constexpr variant_view<Variant, Us...> subview() {
     return variant_view<Variant, Us...>{*this};
   }
