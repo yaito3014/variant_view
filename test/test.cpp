@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double)) 
   // trivial
   {
     // adding const
-    [[maybe_unused]] yk::variant_view<const Variant, int, float> const_view = yk::make_variant_view(v).subview<int, float>();
+    [[maybe_unused]] yk::variant_view<const Variant, int, float> const_view = yk::make_variant_view(v).template subview<int, float>();
   }
 
   {
@@ -109,16 +109,16 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double)) 
     {
       auto view = yk::variant_view<Variant, int, float, double>(v);
 
-      auto int_float_double_view = view.subview<int, float, double>();
+      auto int_float_double_view = view.template subview<int, float, double>();
       static_assert(std::same_as<decltype(int_float_double_view), yk::variant_view<Variant, int, float, double>>);
 
-      auto int_float_double_view2 = int_float_double_view.subview<int, float, double>();
+      auto int_float_double_view2 = int_float_double_view.template subview<int, float, double>();
       static_assert(std::same_as<decltype(int_float_double_view2), decltype(int_float_double_view)>);
 
-      auto int_float_view = view.subview<int, float>();
+      auto int_float_view = view.template subview<int, float>();
       static_assert(std::same_as<decltype(int_float_view), yk::variant_view<Variant, int, float>>);
 
-      auto int_view = int_float_view.subview<int>();
+      auto int_view = int_float_view.template subview<int>();
       static_assert(std::same_as<decltype(int_view), yk::variant_view<Variant, int>>);
     }
 
@@ -126,16 +126,16 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double)) 
     {
       auto view = yk::variant_view<const Variant, int, float, double>(v);
 
-      auto int_float_double_view = view.subview<int, float, double>();
+      auto int_float_double_view = view.template subview<int, float, double>();
       static_assert(std::same_as<decltype(int_float_double_view), yk::variant_view<const Variant, int, float, double>>);
 
-      auto int_float_double_view2 = int_float_double_view.subview<int, float, double>();
+      auto int_float_double_view2 = int_float_double_view.template subview<int, float, double>();
       static_assert(std::same_as<decltype(int_float_double_view2), decltype(int_float_double_view)>);
 
-      auto int_float_view = view.subview<int, float>();
+      auto int_float_view = view.template subview<int, float>();
       static_assert(std::same_as<decltype(int_float_view), yk::variant_view<const Variant, int, float>>);
 
-      auto int_view = int_float_view.subview<int>();
+      auto int_view = int_float_view.template subview<int>();
       static_assert(std::same_as<decltype(int_view), yk::variant_view<const Variant, int>>);
     }
   }
@@ -192,10 +192,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::strin
                        visitable);
     };
 
-    BOOST_REQUIRE_THROW(boost::ignore_unused(do_visit(yk::make_variant_view(Variant{42}).subview<double, std::string>()) == "int"), std::bad_variant_access);
+    BOOST_REQUIRE_THROW(boost::ignore_unused(do_visit(yk::make_variant_view(Variant{42}).template subview<double, std::string>()) == "int"),
+                        std::bad_variant_access);
 
-    BOOST_TEST(do_visit(yk::make_variant_view(Variant{3.14}).subview<double, std::string>()) == "double");
-    BOOST_TEST(do_visit(yk::make_variant_view(Variant{std::string{"foo"}}).subview<double, std::string>()) == "string");
+    BOOST_TEST(do_visit(yk::make_variant_view(Variant{3.14}).template subview<double, std::string>()) == "double");
+    BOOST_TEST(do_visit(yk::make_variant_view(Variant{std::string{"foo"}}).template subview<double, std::string>()) == "string");
   }
 }
 
