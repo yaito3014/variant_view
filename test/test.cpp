@@ -201,4 +201,30 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::strin
   }
 }
 
+BOOST_AUTO_TEST_CASE_TEMPLATE(HoldAlternative, Variant, YK_VARIANT(int, double, std::string)) {
+  BOOST_TEST(yk::holds_alternative<int>(Variant{42}));
+  BOOST_TEST(yk::holds_alternative<double>(Variant{3.14}));
+  BOOST_TEST(yk::holds_alternative<std::string>(Variant{"foo"}));
+
+  BOOST_TEST(!yk::holds_alternative<double>(Variant{42}));
+  BOOST_TEST(!yk::holds_alternative<std::string>(Variant{3.14}));
+  BOOST_TEST(!yk::holds_alternative<int>(Variant{"foo"}));
+
+  BOOST_TEST(yk::holds_alternative<int>(yk::variant_view<Variant, int, double, std::string>(Variant{42})));
+  BOOST_TEST(yk::holds_alternative<double>(yk::variant_view<Variant, int, double, std::string>(Variant{3.14})));
+  BOOST_TEST(yk::holds_alternative<std::string>(yk::variant_view<Variant, int, double, std::string>(Variant{"foo"})));
+
+  BOOST_TEST(!yk::holds_alternative<double>(yk::variant_view<Variant, int, double, std::string>(Variant{42})));
+  BOOST_TEST(!yk::holds_alternative<std::string>(yk::variant_view<Variant, int, double, std::string>(Variant{3.14})));
+  BOOST_TEST(!yk::holds_alternative<int>(yk::variant_view<Variant, int, double, std::string>(Variant{"foo"})));
+
+  BOOST_TEST(yk::holds_alternative<int>(yk::variant_view<const Variant, int, double, std::string>(Variant{42})));
+  BOOST_TEST(yk::holds_alternative<double>(yk::variant_view<const Variant, int, double, std::string>(Variant{3.14})));
+  BOOST_TEST(yk::holds_alternative<std::string>(yk::variant_view<const Variant, int, double, std::string>(Variant{"foo"})));
+
+  BOOST_TEST(!yk::holds_alternative<double>(yk::variant_view<const Variant, int, double, std::string>(Variant{42})));
+  BOOST_TEST(!yk::holds_alternative<std::string>(yk::variant_view<const Variant, int, double, std::string>(Variant{3.14})));
+  BOOST_TEST(!yk::holds_alternative<int>(yk::variant_view<const Variant, int, double, std::string>(Variant{"foo"})));
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // variant_view
