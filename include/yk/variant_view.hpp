@@ -43,9 +43,23 @@ public:
 
   constexpr variant_view() noexcept : base_(nullptr) {}
 
+  constexpr variant_view(const variant_view&) noexcept = default;
+  constexpr variant_view(variant_view&&) noexcept = default;
+  constexpr variant_view& operator=(const variant_view&) noexcept = default;
+  constexpr variant_view& operator=(variant_view&&) noexcept = default;
+
   explicit constexpr variant_view(Variant& variant) noexcept : base_(&variant) {}
 
   explicit constexpr variant_view(variant_type&& variant) noexcept : base_(&variant) {}
+
+  template <class... Us>
+  constexpr variant_view(const variant_view<std::remove_const_t<Variant>, Us...>& other) noexcept : base_(other.base_) {}
+
+  template <class... Us>
+  constexpr variant_view& operator=(const variant_view<std::remove_const_t<Variant>, Us...>& other) noexcept {
+    base_ = other.base_;
+    return *this;
+  }
 
   [[nodiscard]] const variant_type& base() const noexcept { return *base_; }
   [[nodiscard]] variant_type& base() noexcept
@@ -69,9 +83,6 @@ public:
 private:
   template <class V, class... Us>
   friend class variant_view;
-
-  template <class V, class... Us>
-  explicit constexpr variant_view(variant_view<V, Us...>& view) : base_(view.base_) {}
 
   Variant* base_;
 };
