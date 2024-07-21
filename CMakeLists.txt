@@ -44,7 +44,7 @@ install(
 )
 
 if(${Boost_unit_test_framework_FOUND})
-  add_subdirectory(tests EXCLUDE_FROM_ALL)
+  add_subdirectory(test EXCLUDE_FROM_ALL)
 else()
   message(STATUS "Boost.Test is not found, not building tests")
 endif()
