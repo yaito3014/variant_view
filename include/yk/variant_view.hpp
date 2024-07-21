@@ -43,13 +43,9 @@ public:
 
   constexpr variant_view() noexcept : base_(nullptr) {}
 
-  explicit constexpr variant_view(const variant_type& variant) noexcept
-    requires std::is_const_v<Variant>
-      : base_(&variant) {}
+  explicit constexpr variant_view(Variant& variant) noexcept : base_(&variant) {}
 
-  explicit constexpr variant_view(variant_type& variant) noexcept
-    requires(!std::is_const_v<Variant>)
-      : base_(&variant) {}
+  explicit constexpr variant_view(variant_type&& variant) noexcept : base_(&variant) {}
 
   [[nodiscard]] const variant_type& base() const noexcept { return *base_; }
   [[nodiscard]] variant_type& base() noexcept
@@ -81,8 +77,8 @@ private:
 };
 
 template <class... Ts, class Variant>
-[[nodiscard]] constexpr auto make_variant_view(Variant& variant) noexcept {
-  return detail::make_variant_view_result_t<Variant, Ts...>{variant};
+[[nodiscard]] constexpr auto make_variant_view(Variant&& variant) noexcept {
+  return detail::make_variant_view_result_t<std::remove_reference_t<Variant>, Ts...>{std::forward<Variant>(variant)};
 }
 
 namespace detail {
