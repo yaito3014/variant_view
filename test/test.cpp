@@ -227,4 +227,47 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(HoldAlternative, Variant, YK_VARIANT(int, double, 
   BOOST_TEST(!yk::holds_alternative<int>(yk::variant_view<const Variant, int, double, std::string>(Variant{"foo"})));
 }
 
+BOOST_AUTO_TEST_CASE_TEMPLATE(Get, Variant, YK_VARIANT(int, double, std::string)) {
+  BOOST_TEST(yk::get<int>(Variant{42}) == 42);
+  BOOST_TEST(yk::get<double>(Variant{3.14}) == 3.14);
+  BOOST_TEST(yk::get<std::string>(Variant{"foo"}) == "foo");
+
+  BOOST_TEST(yk::get<int>(yk::variant_view<Variant, int, double>{Variant{42}}) == 42);
+  BOOST_TEST(yk::get<double>(yk::variant_view<Variant, int, double>{Variant{3.14}}) == 3.14);
+
+  BOOST_TEST(yk::get<int>(yk::variant_view<const Variant, int, double>{Variant{42}}) == 42);
+  BOOST_TEST(yk::get<double>(yk::variant_view<const Variant, int, double>{Variant{3.14}}) == 3.14);
+
+  BOOST_TEST(yk::get<double>(yk::make_variant_view(Variant{3.14}).template subview<double, std::string>()) == 3.14);
+  BOOST_TEST(yk::get<std::string>(yk::make_variant_view(Variant{"foo"}).template subview<double, std::string>()) == "foo");
+
+  BOOST_TEST(yk::get<0>(Variant{42}) == 42);
+  BOOST_TEST(yk::get<1>(Variant{3.14}) == 3.14);
+  BOOST_TEST(yk::get<2>(Variant{"foo"}) == "foo");
+
+  BOOST_TEST(yk::get<0>(yk::variant_view<Variant, int, double>{Variant{42}}) == 42);
+  BOOST_TEST(yk::get<1>(yk::variant_view<Variant, int, double>{Variant{3.14}}) == 3.14);
+
+  BOOST_TEST(yk::get<0>(yk::variant_view<const Variant, int, double>{Variant{42}}) == 42);
+  BOOST_TEST(yk::get<1>(yk::variant_view<const Variant, int, double>{Variant{3.14}}) == 3.14);
+
+  BOOST_TEST(yk::get<1>(yk::variant_view<Variant, double, int>{Variant{42}}) == 42);
+  BOOST_TEST(yk::get<0>(yk::variant_view<Variant, double, int>{Variant{3.14}}) == 3.14);
+
+  BOOST_TEST(yk::get<1>(yk::variant_view<const Variant, double, int>{Variant{42}}) == 42);
+  BOOST_TEST(yk::get<0>(yk::variant_view<const Variant, double, int>{Variant{3.14}}) == 3.14);
+
+  BOOST_TEST(yk::get<0>(yk::make_variant_view(Variant{3.14}).template subview<double, std::string>()) == 3.14);
+  BOOST_TEST(yk::get<1>(yk::make_variant_view(Variant{"foo"}).template subview<double, std::string>()) == "foo");
+
+  BOOST_REQUIRE_THROW(yk::get<double>(Variant{42}), std::bad_variant_access);
+  BOOST_REQUIRE_THROW(yk::get<1>(Variant{42}), std::bad_variant_access);
+
+  BOOST_REQUIRE_THROW(yk::get<double>(yk::make_variant_view(Variant{42})), std::bad_variant_access);
+  BOOST_REQUIRE_THROW(yk::get<1>(yk::make_variant_view(Variant{42})), std::bad_variant_access);
+
+  BOOST_REQUIRE_THROW(yk::get<double>(yk::make_variant_view(Variant{42}).template subview<double, std::string>()), std::bad_variant_access);
+  BOOST_REQUIRE_THROW(yk::get<1>(yk::make_variant_view(Variant{42}).template subview<double, std::string>()), std::bad_variant_access);
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // variant_view
