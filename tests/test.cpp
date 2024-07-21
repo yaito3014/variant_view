@@ -4,7 +4,7 @@
 #include <string>
 #include <variant>
 
-#define YK_VARIANT_VIEW_INCLUDE_BOOST
+#define YK_VARIANT_VIEW_INCLUDE_BOOST 1
 #include "yk/util/overloaded.hpp"
 #include "yk/variant_view.hpp"
 
