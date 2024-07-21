@@ -24,7 +24,8 @@ namespace utf = boost::unit_test;
 BOOST_AUTO_TEST_SUITE(variant_view)
 
 template <class... Ts>
-using variant_t = std::tuple<std::variant<Ts...>, boost::variant<Ts...>>;
+using variant_t =
+    std::tuple<std::variant<Ts...>, boost::variant<Ts...>, typename boost::make_recursive_variant<Ts..., std::vector<boost::recursive_variant_>>::type>;
 
 #define YK_VARIANT(...) BOOST_IDENTITY_TYPE((variant_t<__VA_ARGS__>))
 
@@ -148,6 +149,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::strin
                            [](const int&) -> std::string { return "int"; },
                            [](const double&) -> std::string { return "double"; },
                            [](const std::string&) -> std::string { return "string"; },
+                           [](const std::vector<Variant>&) -> std::string { return "vector"; },
                        },
                        visitable);
     };
@@ -166,6 +168,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::strin
                                         [](const int&) -> std::string { return "int"; },
                                         [](const double&) -> const char* { return "double"; },
                                         [](const std::string&) -> const char* { return "string"; },
+                                        [](const std::vector<Variant>&) -> std::string { return "vector"; },
                                     },
                                     visitable);
     };
@@ -196,12 +199,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::strin
     BOOST_TEST(do_visit(yk::make_variant_view(Variant{3.14}).template subview<double, std::string>()) == "double");
     BOOST_TEST(do_visit(yk::make_variant_view(Variant{std::string{"foo"}}).template subview<double, std::string>()) == "string");
   }
-}
-
-BOOST_AUTO_TEST_CASE(RecursiveVariant) {
-  using Variant = boost::make_recursive_variant<int, std::string, std::vector<boost::recursive_variant_>>::type;
-
-  // TODO
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // variant_view
