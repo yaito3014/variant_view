@@ -6,37 +6,31 @@
 #define BOOST_TEST_MODULE yk_test
 #include <boost/test/unit_test.hpp>
 
+#include <boost/core/ignore_unused.hpp>
 #include <boost/utility/identity_type.hpp>
 #include <boost/variant.hpp>
 #include <boost/variant/recursive_variant.hpp>
-#include <boost/core/ignore_unused.hpp>
 
-#include <vector>
+#include <concepts>
 #include <string>
 #include <tuple>
-#include <variant>
-#include <utility>
-#include <concepts>
 #include <type_traits>
+#include <utility>
+#include <variant>
+#include <vector>
 
 namespace utf = boost::unit_test;
 
-
 BOOST_AUTO_TEST_SUITE(variant_view)
 
-template<class... Ts>
-using variant_t = std::tuple<
-  std::variant<Ts...>,
-  boost::variant<Ts...>
->;
+template <class... Ts>
+using variant_t = std::tuple<std::variant<Ts...>, boost::variant<Ts...>>;
 
 #define YK_VARIANT(...) BOOST_IDENTITY_TYPE((variant_t<__VA_ARGS__>))
 
 #define YK_YAITO_TODO 0
 
-
-BOOST_AUTO_TEST_CASE_TEMPLATE(Initialization, Variant, YK_VARIANT(int, double))
-{
+BOOST_AUTO_TEST_CASE_TEMPLATE(Initialization, Variant, YK_VARIANT(int, double)) {
   Variant v = 42;
 
   // identical sets (original variant set == view set)
@@ -50,11 +44,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Initialization, Variant, YK_VARIANT(int, double))
   }
   {
     static_assert(std::is_constructible_v<yk::variant_view<Variant, int, double>, Variant&&>);
-    auto view = yk::make_variant_view<int, double>(Variant{42}); // dangling view
+    auto view = yk::make_variant_view<int, double>(Variant{42});  // dangling view
     static_assert(std::same_as<decltype(view), yk::variant_view<Variant, int, double>>);
   }
 
-  // clang-format: off
+  // clang-format off
   // direct initialization (variant_view view{variant};)
   {
     static_assert(std::is_nothrow_constructible_v<yk::variant_view<      Variant, int, double>, Variant>);
@@ -72,25 +66,25 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Initialization, Variant, YK_VARIANT(int, double))
 
   // trivial functions
   {
-    static_assert(std::is_nothrow_default_constructible_v<yk::variant_view<Variant, int, double>>);
+    static_assert(std::is_nothrow_default_constructible_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_default_constructible_v<yk::variant_view<const Variant, int, double>>);
 
-    static_assert(std::is_nothrow_copy_constructible_v<yk::variant_view<Variant, int, double>>);
+    static_assert(std::is_nothrow_copy_constructible_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_copy_constructible_v<yk::variant_view<const Variant, int, double>>);
 
-    static_assert(std::is_nothrow_move_constructible_v<yk::variant_view<Variant, int, double>>);
+    static_assert(std::is_nothrow_move_constructible_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_move_constructible_v<yk::variant_view<const Variant, int, double>>);
 
-    static_assert(std::is_nothrow_copy_assignable_v<yk::variant_view<Variant, int, double>>);
+    static_assert(std::is_nothrow_copy_assignable_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_copy_assignable_v<yk::variant_view<const Variant, int, double>>);
 
-    static_assert(std::is_nothrow_move_assignable_v<yk::variant_view<Variant, int, double>>);
+    static_assert(std::is_nothrow_move_assignable_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_move_assignable_v<yk::variant_view<const Variant, int, double>>);
 
-    static_assert(std::is_nothrow_convertible_v<yk::variant_view<Variant, int, double>, yk::variant_view<const Variant, int, double>>);
-    static_assert(!std::is_nothrow_convertible_v<yk::variant_view<const Variant, int, double>, yk::variant_view<Variant, int, double>>);
+    static_assert(std::is_nothrow_convertible_v<yk::variant_view<       Variant, int, double>, yk::variant_view<const Variant, int, double>>);
+    static_assert(!std::is_nothrow_convertible_v<yk::variant_view<const Variant, int, double>, yk::variant_view<      Variant, int, double>>);
   }
-  // clang-format: on
+  // clang-format on
 
   // view copying
   {
@@ -101,8 +95,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Initialization, Variant, YK_VARIANT(int, double))
   }
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double))
-{
+BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double)) {
   Variant v = 3.14;
 
   // trivial
@@ -118,7 +111,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double))
 
       auto int_float_double_view = view.subview<int, float, double>();
       static_assert(std::same_as<decltype(int_float_double_view), yk::variant_view<Variant, int, float, double>>);
-    
+
       auto int_float_double_view2 = int_float_double_view.subview<int, float, double>();
       static_assert(std::same_as<decltype(int_float_double_view2), decltype(int_float_double_view)>);
 
@@ -135,7 +128,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double))
 
       auto int_float_double_view = view.subview<int, float, double>();
       static_assert(std::same_as<decltype(int_float_double_view), yk::variant_view<const Variant, int, float, double>>);
-    
+
       auto int_float_double_view2 = int_float_double_view.subview<int, float, double>();
       static_assert(std::same_as<decltype(int_float_double_view2), decltype(int_float_double_view)>);
 
@@ -148,17 +141,17 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double))
   }
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::string))
-{
+BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::string)) {
   // we are checking for potential implicit type conversion in this test...
 
   {
     const auto do_visit = [&](const auto& visitable) {
-      return yk::visit(yk::overloaded {
-          [](const int&)         -> std::string { return "int"; },
-          [](const double&)      -> std::string { return "double"; },
-          [](const std::string&) -> std::string { return "string"; },
-      }, visitable);
+      return yk::visit(yk::overloaded{
+                           [](const int&) -> std::string { return "int"; },
+                           [](const double&) -> std::string { return "double"; },
+                           [](const std::string&) -> std::string { return "string"; },
+                       },
+                       visitable);
     };
 
     BOOST_TEST(do_visit(Variant{42}) == "int");
@@ -171,11 +164,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::strin
   }
   {
     const auto do_visit_with_R = [&](const auto& visitable) {
-      return yk::visit<std::string>(yk::overloaded {
-          [](const int&)         -> std::string { return "int"; },
-          [](const double&)      -> const char* { return "double"; },
-          [](const std::string&) -> const char* { return "string"; },
-      }, visitable);
+      return yk::visit<std::string>(yk::overloaded{
+                                        [](const int&) -> std::string { return "int"; },
+                                        [](const double&) -> const char* { return "double"; },
+                                        [](const std::string&) -> const char* { return "string"; },
+                                    },
+                                    visitable);
     };
 
     BOOST_TEST(do_visit_with_R(Variant{42}) == "int");
@@ -190,34 +184,25 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::strin
   // visiting subviews, with fully exhaustive visitor
   {
     const auto do_visit = [&](const auto& visitable) [[maybe_unused]] {
-      return yk::visit(yk::overloaded {
-          [](const int&)         -> std::string { return "int"; },
-          [](const double&)      -> std::string { return "double"; },
-          [](const std::string&) -> std::string { return "string"; },
-      }, visitable);
+      return yk::visit(yk::overloaded{
+                           [](const int&) -> std::string { return "int"; },
+                           [](const double&) -> std::string { return "double"; },
+                           [](const std::string&) -> std::string { return "string"; },
+                       },
+                       visitable);
     };
 
-    BOOST_REQUIRE_THROW(
-      boost::ignore_unused(do_visit(yk::make_variant_view(Variant{42}).subview<double, std::string>()) == "int"),
-      std::bad_variant_access
-    );
+    BOOST_REQUIRE_THROW(boost::ignore_unused(do_visit(yk::make_variant_view(Variant{42}).subview<double, std::string>()) == "int"), std::bad_variant_access);
 
     BOOST_TEST(do_visit(yk::make_variant_view(Variant{3.14}).subview<double, std::string>()) == "double");
     BOOST_TEST(do_visit(yk::make_variant_view(Variant{std::string{"foo"}}).subview<double, std::string>()) == "string");
   }
-
 }
 
-BOOST_AUTO_TEST_CASE(RecursiveVariant)
-{
-  using Variant = boost::make_recursive_variant<
-    int,
-    std::string,
-    std::vector<boost::recursive_variant_>
-  >::type;
-
+BOOST_AUTO_TEST_CASE(RecursiveVariant) {
+  using Variant = boost::make_recursive_variant<int, std::string, std::vector<boost::recursive_variant_>>::type;
 
   // TODO
 }
 
-BOOST_AUTO_TEST_SUITE_END() // variant_view
+BOOST_AUTO_TEST_SUITE_END()  // variant_view
