@@ -15,6 +15,7 @@
 
 #include "yk/variant/traits.hpp"
 
+#include <cstddef>
 #include <type_traits>
 #include <utility>
 
@@ -104,6 +105,29 @@ constexpr decltype(auto) visit(Visitor&& vis, Variant&& variant) {
 template <class Res, class Visitor, class Variant>
 constexpr Res visit(Visitor&& vis, Variant&& variant) {
   return detail::visit_impl<std::remove_cvref_t<Variant>>::template apply<Res>(std::forward<Visitor>(vis), std::forward<Variant>(variant));
+}
+
+template <class T, class VariantView>
+  requires specialization_of<std::remove_cvref_t<VariantView>, variant_view>
+constexpr decltype(auto) get(VariantView&& view) {
+  return yk::get<T>(std::forward<VariantView>(view).base());
+}
+
+template <std::size_t I, class Variant, class... Ts>
+constexpr decltype(auto) get(const variant_view<Variant, Ts...>& view) {
+  return yk::get<pack_indexing_t<I, Ts...>>(view.base());
+}
+template <std::size_t I, class Variant, class... Ts>
+constexpr decltype(auto) get(variant_view<Variant, Ts...>& view) {
+  return yk::get<pack_indexing_t<I, Ts...>>(view.base());
+}
+template <std::size_t I, class Variant, class... Ts>
+constexpr decltype(auto) get(variant_view<Variant, Ts...>&& view) {
+  return yk::get<pack_indexing_t<I, Ts...>>(std::move(view).base());
+}
+template <std::size_t I, class Variant, class... Ts>
+constexpr decltype(auto) get(const variant_view<Variant, Ts...>&& view) {
+  return yk::get<pack_indexing_t<I, Ts...>>(std::move(view).base());
 }
 
 namespace detail {
