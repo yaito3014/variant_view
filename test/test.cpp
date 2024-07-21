@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Visit, Variant, YK_VARIANT(int, double, std::strin
 
   // visiting subviews, with fully exhaustive visitor
   {
-    const auto do_visit = [&](const auto& visitable) [[maybe_unused]] {
+    const auto do_visit = [&](const auto& visitable) {
       return yk::visit(yk::overloaded{
                            [](const int&) -> std::string { return "int"; },
                            [](const double&) -> std::string { return "double"; },
