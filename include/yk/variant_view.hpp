@@ -5,11 +5,11 @@
 #define YK_VARIANT_VIEW_INCLUDE_STL 1
 #endif
 
-#ifdef YK_VARIANT_VIEW_INCLUDE_STL
+#if YK_VARIANT_VIEW_INCLUDE_STL
 #include "yk/variant_view/stl.hpp"
 #endif
 
-#ifdef YK_VARIANT_VIEW_INCLUDE_BOOST
+#if YK_VARIANT_VIEW_INCLUDE_BOOST
 #include "yk/variant_view/boost.hpp"
 #endif
 

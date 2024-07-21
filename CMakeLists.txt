@@ -26,7 +26,7 @@ set_target_properties(
 
 find_package(Boost CONFIG)
 if(${Boost_FOUND})
-  target_compile_definitions(variant_view INTERFACE YK_VARIANT_VIEW_INCLUDE_BOOST_BY_DEFAULT)
+  target_compile_definitions(variant_view INTERFACE YK_VARIANT_VIEW_INCLUDE_BOOST=1)
   target_link_libraries(variant_view INTERFACE Boost::headers)
 endif()
 
