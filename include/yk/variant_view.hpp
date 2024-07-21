@@ -30,6 +30,9 @@ struct variant_param_list<T, Ts...> {
   using head = T;
 };
 
+template <class Variant>
+struct visit_impl;
+
 }  // namespace detail
 
 template <class Variant, class... Ts>
@@ -91,13 +94,6 @@ private:
 template <class... Ts, class Variant>
 [[nodiscard]] constexpr auto make_variant_view(Variant&& variant) noexcept {
   return detail::make_variant_view_result_t<std::remove_reference_t<Variant>, Ts...>{std::forward<Variant>(variant)};
-}
-
-namespace detail {
-
-template <class Variant>
-struct visit_impl;
-
 }
 
 template <class Visitor, class Variant>
