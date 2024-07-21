@@ -109,6 +109,14 @@ template <class T, class... Ts, class... Us>
   }(detail::boost_variant_types_t<boost::variant<Ts...>>{});
 }
 
+template <class T, class... Ts, class... Us>
+[[nodiscard]] /* constexpr */ bool holds_alternative(const variant_view<const boost::variant<Ts...>, Us...>& v) noexcept {
+  return [&]<class... Vs>(detail::type_list<Vs...>) {
+    static_assert(core::exactly_once_v<T, Vs...>);
+    return core::find_type_index_v<T, Vs...> == v.base().which();
+  }(detail::boost_variant_types_t<boost::variant<Ts...>>{});
+}
+
 // template <class... Ts>
 // variant_view(const boost::variant<Ts...>&) -> /* impossible due to boost::recursive_variant_ */;
 
