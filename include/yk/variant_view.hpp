@@ -52,8 +52,9 @@ public:
 
   explicit constexpr variant_view(variant_type&& variant) noexcept : base_(&variant) {}
 
-  template <class... Us>
-  constexpr variant_view(const variant_view<std::remove_const_t<Variant>, Us...>& other) noexcept : base_(other.base_) {}
+  template <class V, class... Us>
+    requires(std::is_const_v<Variant> || !std::is_const_v<V>)
+  constexpr variant_view(const variant_view<V, Us...>& other) noexcept : base_(other.base_) {}
 
   template <class... Us>
   constexpr variant_view& operator=(const variant_view<std::remove_const_t<Variant>, Us...>& other) noexcept {
@@ -69,14 +70,14 @@ public:
   }
 
   template <class... Us>
-    requires detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Us...>, Us...>
   [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const {
+    static_assert(detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Us...>, Us...>);
     return variant_view<const Variant, Us...>{*this};
   }
 
   template <class... Us>
-    requires detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Us...>, Us...>
   [[nodiscard]] constexpr variant_view<Variant, Us...> subview() {
+    static_assert(detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Us...>, Us...>);
     return variant_view<Variant, Us...>{*this};
   }
 
