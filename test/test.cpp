@@ -337,8 +337,17 @@ struct S {
 };
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::string, S)) {
-  Variant var = 42;
+  BOOST_REQUIRE_THROW((boost::ignore_unused(*yk::variant_view<const Variant, int>{})), yk::uninitialized_variant_view);
+  BOOST_REQUIRE_THROW((boost::ignore_unused(*yk::variant_view<Variant, int>{})), yk::uninitialized_variant_view);
+
+  BOOST_REQUIRE_THROW(boost::ignore_unused(yk::variant_view<const Variant, S> {} -> member), yk::uninitialized_variant_view);
+  BOOST_REQUIRE_THROW(boost::ignore_unused(yk::variant_view<Variant, S> {} -> member), yk::uninitialized_variant_view);
+
+  BOOST_TEST(!static_cast<bool>(yk::variant_view<const Variant, int>{}));
+  BOOST_TEST(!static_cast<bool>(yk::variant_view<Variant, int>{}));
+
   {
+    Variant var = 42;
     auto const_view = yk::variant_view<const Variant, int>(var);
     auto mutable_view = yk::variant_view<Variant, int>(var);
 
@@ -348,13 +357,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::s
     BOOST_TEST((*const_view == 42));
     BOOST_TEST((*mutable_view == 42));
 
-    BOOST_REQUIRE_THROW((boost::ignore_unused(*yk::variant_view<const Variant, int>{})), yk::uninitialized_variant_view);
-    BOOST_REQUIRE_THROW((boost::ignore_unused(*yk::variant_view<Variant, int>{})), yk::uninitialized_variant_view);
+    var = 3.14;
 
-    BOOST_TEST(!static_cast<bool>(yk::variant_view<const Variant, int>{}));
-    BOOST_TEST(!static_cast<bool>(yk::variant_view<Variant, int>{}));
+    BOOST_REQUIRE_THROW(boost::ignore_unused(*const_view), std::bad_variant_access);
+    BOOST_REQUIRE_THROW(boost::ignore_unused(*mutable_view), std::bad_variant_access);
   }
   {
+    Variant var = 42;
     auto const_view = yk::variant_view<const Variant, S>(var);
     auto mutable_view = yk::variant_view<Variant, S>(var);
 
@@ -371,9 +380,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::s
 
     BOOST_TEST((const_view->member == 42));
     BOOST_TEST((mutable_view->member == 42));
-
-    BOOST_REQUIRE_THROW(boost::ignore_unused(yk::variant_view<const Variant, S> {} -> member), yk::uninitialized_variant_view);
-    BOOST_REQUIRE_THROW(boost::ignore_unused(yk::variant_view<Variant, S> {} -> member), yk::uninitialized_variant_view);
   }
 }
 
