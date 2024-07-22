@@ -13,6 +13,7 @@
 #include "yk/variant_view/boost.hpp"
 #endif
 
+#include "yk/util/pack_indexing.hpp"
 #include "yk/variant/traits.hpp"
 
 #include <cstddef>
@@ -22,14 +23,6 @@
 namespace yk {
 
 namespace detail {
-
-template <class... Ts>
-struct variant_param_list {};
-
-template <class T, class... Ts>
-struct variant_param_list<T, Ts...> {
-  using head = T;
-};
 
 template <class Variant>
 struct visit_impl;
@@ -151,7 +144,7 @@ namespace detail {
 
 template <class Visitor, class Variant, class... Ts>
 struct SupersetTypeCatcher {
-  using deduced_return_type = std::invoke_result_t<Visitor, typename detail::variant_param_list<Ts...>::head>;
+  using deduced_return_type = std::invoke_result_t<Visitor, core::pack_indexing_t<0, Ts...>>;
 
   Visitor vis;
   template <class T>
