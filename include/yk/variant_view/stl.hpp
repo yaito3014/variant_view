@@ -12,6 +12,21 @@
 
 namespace yk {
 
+template <class... Ts>
+struct variant_dispatch<std::variant<Ts...>> {
+  template <class Visitor, class Variant>
+  static constexpr decltype(auto) apply_visit(Visitor&& vis, Variant&& variant) {
+    return std::visit(std::forward<Visitor>(vis), std::forward<Variant>(variant));
+  }
+
+  template <class Res, class Visitor, class Variant>
+  static constexpr Res apply_visit(Visitor&& vis, Variant&& variant) {
+    return std::visit<Res>(std::forward<Visitor>(vis), std::forward<Variant>(variant));
+  }
+
+  static constexpr std::size_t apply_index(const std::variant<Ts...>& var) noexcept { return var.index(); }
+};
+
 namespace detail {
 
 template <class... Ts, class... Us, class T>
@@ -25,30 +40,6 @@ struct variant_like<std::variant<Ts...>> : std::true_type {};
 template <class... Ts>
 struct make_variant_view_result<std::variant<Ts...>> {
   using type = variant_view<std::variant<Ts...>, Ts...>;
-};
-
-template <class Variant>
-struct visit_impl;
-
-template <class... Ts>
-struct visit_impl<std::variant<Ts...>> {
-  template <class Visitor, class Variant>
-  static constexpr decltype(auto) apply(Visitor&& vis, Variant&& variant) {
-    return std::visit(std::forward<Visitor>(vis), std::forward<Variant>(variant));
-  }
-
-  template <class Res, class Visitor, class Variant>
-  static constexpr Res apply(Visitor&& vis, Variant&& variant) {
-    return std::visit<Res>(std::forward<Visitor>(vis), std::forward<Variant>(variant));
-  }
-};
-
-template <class Variant>
-struct variant_index_impl;
-
-template <class... Ts>
-struct variant_index_impl<std::variant<Ts...>> {
-  static constexpr std::size_t apply(const std::variant<Ts...>& var) noexcept { return var.index(); }
 };
 
 }  // namespace detail

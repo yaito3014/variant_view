@@ -23,16 +23,6 @@
 
 namespace yk {
 
-namespace detail {
-
-template <class Variant>
-struct visit_impl;
-
-template <class Variant>
-struct variant_index_impl;
-
-}  // namespace detail
-
 template <class Variant, class... Ts>
 class variant_view {
 public:
@@ -115,7 +105,7 @@ public:
   template <class Res, class Visitor>
   constexpr Res visit(Visitor&& vis);
 
-  [[nodiscard]] constexpr std::size_t index() const noexcept { return detail::variant_index_impl<std::remove_const_t<Variant>>::apply(base()); }
+  [[nodiscard]] constexpr std::size_t index() const noexcept { return variant_dispatch<std::remove_const_t<Variant>>::apply_index(base()); }
   [[nodiscard]] constexpr bool invalid() const noexcept { return base_ == nullptr; }
 
   [[nodiscard]] constexpr bool operator==(const variant_view& other) const noexcept { return base() == other.base(); }
@@ -137,12 +127,12 @@ template <class... Ts, class Variant>
 
 template <class Visitor, class Variant>
 constexpr decltype(auto) visit(Visitor&& vis, Variant&& variant) {
-  return detail::visit_impl<std::remove_cvref_t<Variant>>::apply(std::forward<Visitor>(vis), std::forward<Variant>(variant));
+  return variant_dispatch<std::remove_cvref_t<Variant>>::apply_visit(std::forward<Visitor>(vis), std::forward<Variant>(variant));
 }
 
 template <class Res, class Visitor, class Variant>
 constexpr Res visit(Visitor&& vis, Variant&& variant) {
-  return detail::visit_impl<std::remove_cvref_t<Variant>>::template apply<Res>(std::forward<Visitor>(vis), std::forward<Variant>(variant));
+  return variant_dispatch<std::remove_cvref_t<Variant>>::template apply_visit<Res>(std::forward<Visitor>(vis), std::forward<Variant>(variant));
 }
 
 template <class Variant, class... Ts>
@@ -277,20 +267,20 @@ struct SupersetTypeCatcher {
   }
 };
 
+}  // namespace detail
+
 template <class Variant, class... Ts>
-struct visit_impl<variant_view<Variant, Ts...>> {
+struct variant_dispatch<variant_view<Variant, Ts...>> {
   template <class Visitor, class V>
-  static constexpr decltype(auto) apply(Visitor&& vis, V&& view) {
-    return yk::visit(SupersetTypeCatcher<Visitor, Variant, Ts...>{std::forward<Visitor>(vis)}, view.base());
+  static constexpr decltype(auto) apply_visit(Visitor&& vis, V&& view) {
+    return yk::visit(detail::SupersetTypeCatcher<Visitor, Variant, Ts...>{std::forward<Visitor>(vis)}, view.base());
   }
 
   template <class Res, class Visitor, class V>
-  static constexpr Res apply(Visitor&& vis, V&& view) {
-    return yk::visit<Res>(SupersetTypeCatcher<Visitor, Variant, Ts...>{std::forward<Visitor>(vis)}, view.base());
+  static constexpr Res apply_visit(Visitor&& vis, V&& view) {
+    return yk::visit<Res>(detail::SupersetTypeCatcher<Visitor, Variant, Ts...>{std::forward<Visitor>(vis)}, view.base());
   }
 };
-
-}  // namespace detail
 
 }  // namespace yk
 

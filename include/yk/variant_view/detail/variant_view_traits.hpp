@@ -8,6 +8,9 @@ namespace yk {
 template <class Variant, class... Ts>
 class variant_view;
 
+template <class Variant>
+struct variant_dispatch;
+
 }  // namespace yk
 
 namespace yk::detail {

@@ -57,11 +57,10 @@ struct make_variant_view_result<boost::variant<Ts...>> {
   using type = typename helper<boost_variant_types_t<boost::variant<Ts...>>>::type;
 };
 
-template <class Variant>
-struct visit_impl;
+}  // namespace detail
 
 template <class... Ts>
-struct visit_impl<boost::variant<Ts...>> {
+struct variant_dispatch<boost::variant<Ts...>> {
 private:
   template <class Visitor, class Res>
   struct Wrapper {
@@ -75,7 +74,7 @@ private:
 
 public:
   template <class Visitor, class Variant>
-  static constexpr decltype(auto) apply(Visitor&& vis, Variant&& variant) {
+  static constexpr decltype(auto) apply_visit(Visitor&& vis, Variant&& variant) {
     []<class... Us>(detail::type_list<Us...>) {
       static_assert(core::is_all_same_v<std::invoke_result_t<Visitor, Us>...>, "visitor must return same type for all possible parameters");
     }(detail::boost_variant_types_t<std::remove_cvref_t<Variant>>{});
@@ -83,21 +82,13 @@ public:
   }
 
   template <class Res, class Visitor, class Variant>
-  static constexpr Res apply(Visitor&& vis, Variant&& variant) {
+  static constexpr Res apply_visit(Visitor&& vis, Variant&& variant) {
     Wrapper<Visitor, Res> wrapper{std::forward<Visitor>(vis)};
     return std::forward<Variant>(variant).apply_visitor(wrapper);
   }
+
+  static constexpr std::size_t apply_index(const boost::variant<Ts...>& var) noexcept { return static_cast<std::size_t>(var.which()); }
 };
-
-template <class Variant>
-struct variant_index_impl;
-
-template <class... Ts>
-struct variant_index_impl<boost::variant<Ts...>> {
-  static constexpr std::size_t apply(const boost::variant<Ts...>& var) noexcept { return static_cast<std::size_t>(var.which()); }
-};
-
-}  // namespace detail
 
 template <class T, class... Ts>
 [[nodiscard]] /* constexpr */ bool holds_alternative(const boost::variant<Ts...>& v) noexcept {
