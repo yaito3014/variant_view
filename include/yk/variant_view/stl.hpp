@@ -48,6 +48,14 @@ struct visit_impl<std::variant<Ts...>> {
   }
 };
 
+template <class Variant>
+struct variant_index_impl;
+
+template <class... Ts>
+struct variant_index_impl<std::variant<Ts...>> {
+  static constexpr std::size_t apply(const std::variant<Ts...>& var) noexcept { return var.index(); }
+};
+
 }  // namespace detail
 
 template <class... Ts, class T>

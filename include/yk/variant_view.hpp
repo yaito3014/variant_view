@@ -28,6 +28,9 @@ namespace detail {
 template <class Variant>
 struct visit_impl;
 
+template <class Variant>
+struct variant_index_impl;
+
 }  // namespace detail
 
 template <class Variant, class... Ts>
@@ -101,6 +104,9 @@ public:
 
   template <class Res, class Visitor>
   constexpr Res visit(Visitor&& vis);
+
+  constexpr std::size_t index() const noexcept { return detail::variant_index_impl<std::remove_const_t<Variant>>::apply(base()); }
+  constexpr bool invalid() const noexcept { return base_ == nullptr; }
 
   [[nodiscard]] constexpr bool operator==(const variant_view& other) const noexcept { return base() == other.base(); }
   [[nodiscard]] constexpr auto operator<=>(const variant_view& other) const noexcept { return base() <=> other.base(); }

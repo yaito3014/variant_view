@@ -94,6 +94,14 @@ public:
   }
 };
 
+template <class Variant>
+struct variant_index_impl;
+
+template <class... Ts>
+struct variant_index_impl<boost::variant<Ts...>> {
+  static constexpr std::size_t apply(const boost::variant<Ts...>& var) noexcept { return static_cast<std::size_t>(var.which()); }
+};
+
 }  // namespace detail
 
 template <class T, class... Ts>

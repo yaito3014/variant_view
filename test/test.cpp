@@ -94,6 +94,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Initialization, Variant, YK_VARIANT(int, double)) 
     static_assert(std::is_constructible_v<yk::variant_view<Variant, int, double>, decltype(mutable_view)>);
     static_assert(std::is_constructible_v<yk::variant_view<const Variant, int, double>, decltype(mutable_view)>);
   }
+
+  BOOST_TEST((yk::variant_view<Variant, int, double>{}.invalid()));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double)) {
@@ -330,6 +332,16 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Hash, Variant, YK_VARIANT(int, double, std::string
       yk::variant_view<Variant, int, double>{c},
   };
   BOOST_TEST(set.size() == 2);
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(Index, Variant, YK_VARIANT(int, double, std::string)) {
+  Variant a = 33, b = 4;
+  if constexpr (yk::is_specialization_of_v<std::variant, Variant>) {
+    BOOST_TEST(yk::make_variant_view<int>(a).index() == a.index());
+  } else {
+    BOOST_TEST(yk::make_variant_view<int>(a).index() == static_cast<std::size_t>(a.which()));
+  }
+  BOOST_TEST(yk::make_variant_view<int>(a).index() == yk::make_variant_view<int>(b).index());
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // variant_view
