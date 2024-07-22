@@ -46,11 +46,6 @@ template <class... Ts>
 struct variant_like<boost::variant<Ts...>> : std::true_type {};
 
 template <class... Ts>
-struct make_variant_view_result<boost::variant<Ts...>, Ts...> {
-  using type = variant_view<boost::variant<Ts...>, Ts...>;
-};
-
-template <class... Ts>
 struct make_variant_view_result<boost::variant<Ts...>> {
   template <class TypeList>
   struct helper {};

@@ -38,10 +38,8 @@ struct make_variant_view_result {
 template <class Variant, class... Ts>
 using make_variant_view_result_t = typename make_variant_view_result<Variant, Ts...>::type;
 
-#if defined(__cpp_concepts)
 template <class Variant>
 concept VariantLike = variant_like<Variant>::value;
-#endif
 
 }  // namespace yk::detail
 

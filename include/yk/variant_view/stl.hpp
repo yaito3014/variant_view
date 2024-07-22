@@ -23,11 +23,6 @@ template <class... Ts>
 struct variant_like<std::variant<Ts...>> : std::true_type {};
 
 template <class... Ts>
-struct make_variant_view_result<std::variant<Ts...>, Ts...> {
-  using type = variant_view<std::variant<Ts...>, Ts...>;
-};
-
-template <class... Ts>
 struct make_variant_view_result<std::variant<Ts...>> {
   using type = variant_view<std::variant<Ts...>, Ts...>;
 };
