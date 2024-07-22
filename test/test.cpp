@@ -67,22 +67,40 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Initialization, Variant, YK_VARIANT(int, double)) 
 
   // trivial functions
   {
+    static_assert(std::is_trivial_v<yk::variant_view<      Variant, int, double>>);
+    static_assert(std::is_trivial_v<yk::variant_view<const Variant, int, double>>);
+
+    static_assert(std::is_trivially_default_constructible_v<yk::variant_view<      Variant, int, double>>);
+    static_assert(std::is_trivially_default_constructible_v<yk::variant_view<const Variant, int, double>>);
+
     static_assert(std::is_nothrow_default_constructible_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_default_constructible_v<yk::variant_view<const Variant, int, double>>);
+
+    static_assert(std::is_trivially_copy_constructible_v<yk::variant_view<      Variant, int, double>>);
+    static_assert(std::is_trivially_copy_constructible_v<yk::variant_view<const Variant, int, double>>);
 
     static_assert(std::is_nothrow_copy_constructible_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_copy_constructible_v<yk::variant_view<const Variant, int, double>>);
 
+    static_assert(std::is_trivially_move_constructible_v<yk::variant_view<      Variant, int, double>>);
+    static_assert(std::is_trivially_move_constructible_v<yk::variant_view<const Variant, int, double>>);
+
     static_assert(std::is_nothrow_move_constructible_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_move_constructible_v<yk::variant_view<const Variant, int, double>>);
+
+    static_assert(std::is_trivially_copy_assignable_v<yk::variant_view<      Variant, int, double>>);
+    static_assert(std::is_trivially_copy_assignable_v<yk::variant_view<const Variant, int, double>>);
 
     static_assert(std::is_nothrow_copy_assignable_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_copy_assignable_v<yk::variant_view<const Variant, int, double>>);
 
+    static_assert(std::is_trivially_move_assignable_v<yk::variant_view<      Variant, int, double>>);
+    static_assert(std::is_trivially_move_assignable_v<yk::variant_view<const Variant, int, double>>);
+
     static_assert(std::is_nothrow_move_assignable_v<yk::variant_view<      Variant, int, double>>);
     static_assert(std::is_nothrow_move_assignable_v<yk::variant_view<const Variant, int, double>>);
 
-    static_assert(std::is_nothrow_convertible_v<yk::variant_view<       Variant, int, double>, yk::variant_view<const Variant, int, double>>);
+    static_assert( std::is_nothrow_convertible_v<yk::variant_view<      Variant, int, double>, yk::variant_view<const Variant, int, double>>);
     static_assert(!std::is_nothrow_convertible_v<yk::variant_view<const Variant, int, double>, yk::variant_view<      Variant, int, double>>);
   }
   // clang-format on

@@ -42,7 +42,7 @@ public:
 
   using variant_type = std::remove_const_t<Variant>;
 
-  constexpr variant_view() noexcept : base_(nullptr) {}
+  constexpr variant_view() noexcept = default;
 
   constexpr variant_view(const variant_view&) noexcept = default;
   constexpr variant_view(variant_view&&) noexcept = default;
