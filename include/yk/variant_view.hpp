@@ -82,13 +82,13 @@ public:
     requires(sizeof...(Ts) == 1);
 
   template <class... Us>
-  [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const {
+  [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const noexcept {
     static_assert(detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Us...>, Us...>);
     return variant_view<const Variant, Us...>{*this};
   }
 
   template <class... Us>
-  [[nodiscard]] constexpr variant_view<Variant, Us...> subview() {
+  [[nodiscard]] constexpr variant_view<Variant, Us...> subview() noexcept {
     static_assert(detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Us...>, Us...>);
     return variant_view<Variant, Us...>{*this};
   }
