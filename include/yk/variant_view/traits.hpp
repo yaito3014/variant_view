@@ -5,6 +5,12 @@
 
 namespace yk {
 
+template <class VariantView, class T>
+struct is_in_variant_view : std::false_type {};
+
+template <class VariantView, class T>
+inline constexpr bool is_in_variant_view_v = is_in_variant_view<VariantView, T>::value;
+
 template <class Variant, class... Ts>
 class variant_view;
 
@@ -15,12 +21,6 @@ struct make_variant_view_result {
 
 template <class Variant, class... Ts>
 using make_variant_view_result_t = typename make_variant_view_result<Variant, Ts...>::type;
-
-template <class VariantView, class T>
-struct is_in_variant_view : std::false_type {};
-
-template <class VariantView, class T>
-inline constexpr bool is_in_variant_view_v = is_in_variant_view<VariantView, T>::value;
 
 }  // namespace yk
 
