@@ -84,24 +84,16 @@ public:
   }
 
   template <class Visitor>
-  constexpr decltype(auto) visit(Visitor&& vis) const {
-    return yk::visit(std::forward<Visitor>(vis), *this);
-  }
+  constexpr decltype(auto) visit(Visitor&& vis) const;
 
   template <class Res, class Visitor>
-  constexpr Res visit(Visitor&& vis) const {
-    return yk::visit<Res>(std::forward<Visitor>(vis), *this);
-  }
+  constexpr Res visit(Visitor&& vis) const;
 
   template <class Visitor>
-  constexpr decltype(auto) visit(Visitor&& vis) {
-    return yk::visit(std::forward<Visitor>(vis), *this);
-  }
+  constexpr decltype(auto) visit(Visitor&& vis);
 
   template <class Res, class Visitor>
-  constexpr Res visit(Visitor&& vis) {
-    return yk::visit<Res>(std::forward<Visitor>(vis), *this);
-  }
+  constexpr Res visit(Visitor&& vis);
 
 private:
   template <class V, class... Us>
@@ -123,6 +115,30 @@ constexpr decltype(auto) visit(Visitor&& vis, Variant&& variant) {
 template <class Res, class Visitor, class Variant>
 constexpr Res visit(Visitor&& vis, Variant&& variant) {
   return detail::visit_impl<std::remove_cvref_t<Variant>>::template apply<Res>(std::forward<Visitor>(vis), std::forward<Variant>(variant));
+}
+
+template <class Variant, class... Ts>
+template <class Visitor>
+constexpr decltype(auto) variant_view<Variant, Ts...>::visit(Visitor&& vis) const {
+  return yk::visit(std::forward<Visitor>(vis), *this);
+}
+
+template <class Variant, class... Ts>
+template <class Res, class Visitor>
+constexpr Res variant_view<Variant, Ts...>::visit(Visitor&& vis) const {
+  return yk::visit<Res>(std::forward<Visitor>(vis), *this);
+}
+
+template <class Variant, class... Ts>
+template <class Visitor>
+constexpr decltype(auto) variant_view<Variant, Ts...>::visit(Visitor&& vis) {
+  return yk::visit(std::forward<Visitor>(vis), *this);
+}
+
+template <class Variant, class... Ts>
+template <class Res, class Visitor>
+constexpr Res variant_view<Variant, Ts...>::visit(Visitor&& vis) {
+  return yk::visit<Res>(std::forward<Visitor>(vis), *this);
 }
 
 template <class T, class VariantView>
