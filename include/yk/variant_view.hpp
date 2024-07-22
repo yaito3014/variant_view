@@ -153,8 +153,19 @@ struct SupersetTypeCatcher {
   }
 
   template <class T>
+  constexpr deduced_return_type operator()(T&& x) {
+    return std::invoke(vis, std::forward<T>(x));
+  }
+
+  template <class T>
     requires(!is_subtype_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Ts...>, std::remove_cvref_t<T>>)
   [[noreturn]] constexpr deduced_return_type operator()(T&&) const {
+    throw std::bad_variant_access{};
+  }
+
+  template <class T>
+    requires(!is_subtype_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Ts...>, std::remove_cvref_t<T>>)
+  [[noreturn]] constexpr deduced_return_type operator()(T&&) {
     throw std::bad_variant_access{};
   }
 };
