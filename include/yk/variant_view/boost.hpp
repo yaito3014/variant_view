@@ -6,7 +6,7 @@
 #include "yk/util/find_type_index.hpp"
 #include "yk/util/pack_indexing.hpp"
 #include "yk/variant/traits.hpp"
-#include "yk/variant_view/detail/variant_view_traits.hpp"
+#include "yk/variant_view/traits.hpp"
 
 #include <boost/mpl/contains.hpp>
 #include <boost/variant/apply_visitor.hpp>

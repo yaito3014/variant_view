@@ -15,6 +15,7 @@
 
 #include "yk/util/pack_indexing.hpp"
 #include "yk/variant/traits.hpp"
+#include "yk/variant_view/traits.hpp"
 
 #include <compare>
 #include <cstddef>

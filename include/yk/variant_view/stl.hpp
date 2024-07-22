@@ -3,7 +3,7 @@
 
 #include "yk/util/specialization_of.hpp"
 #include "yk/variant/traits.hpp"
-#include "yk/variant_view/detail/variant_view_traits.hpp"
+#include "yk/variant_view/traits.hpp"
 
 #include <cstddef>
 #include <type_traits>

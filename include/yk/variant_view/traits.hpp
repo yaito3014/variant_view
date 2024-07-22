@@ -1,5 +1,5 @@
-#ifndef YK_VARIANT_VIEW_DETAIL_VARIANT_VIEW_TRAITS_HPP
-#define YK_VARIANT_VIEW_DETAIL_VARIANT_VIEW_TRAITS_HPP
+#ifndef YK_VARIANT_VIEW_TRAITS_HPP
+#define YK_VARIANT_VIEW_TRAITS_HPP
 
 #include <type_traits>
 
@@ -24,4 +24,4 @@ inline constexpr bool is_in_variant_view_v = is_in_variant_view<VariantView, T>:
 
 }  // namespace yk
 
-#endif  // YK_VARIANT_VIEW_DETAIL_VARIANT_VIEW_TRAITS_HPP
+#endif  // YK_VARIANT_VIEW_TRAITS_HPP
