@@ -23,6 +23,16 @@
 
 namespace yk {
 
+namespace detail {
+
+template <class VariantView, class... Ts>
+struct are_all_in_variant_view : std::conjunction<is_in_variant_view<VariantView, Ts>...> {};
+
+template <class VariantView, class... Ts>
+inline constexpr bool are_all_in_variant_view_v = are_all_in_variant_view<VariantView, Ts...>::value;
+
+}  // namespace detail
+
 template <class Variant, class... Ts>
 class variant_view {
 public:
@@ -46,8 +56,7 @@ public:
   template <class V, class... Us>
     requires(std::is_const_v<Variant> || !std::is_const_v<V>)
   constexpr variant_view(const variant_view<V, Us...>& other) noexcept : base_(other.base_) {
-    static_assert(detail::is_subtypes_in_variant_view_v<variant_view<std::remove_const_t<Variant>, Us...>, Us...>,
-                  "only operations which take subset is allowed");
+    static_assert(detail::are_all_in_variant_view_v<variant_view<std::remove_const_t<Variant>, Us...>, Us...>, "only operations which take subset is allowed");
   }
 
   template <class... Us>
