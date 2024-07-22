@@ -50,12 +50,12 @@ template <class T, class... Ts>
 
 template <class T, class... Ts, class... Us>
 [[nodiscard]] constexpr bool holds_alternative(const variant_view<std::variant<Ts...>, Us...>& v) noexcept {
-  return std::holds_alternative<T>(v.base());
+  return !v.invalid() && std::holds_alternative<T>(v.base());
 }
 
 template <class T, class... Ts, class... Us>
 [[nodiscard]] constexpr bool holds_alternative(const variant_view<const std::variant<Ts...>, Us...>& v) noexcept {
-  return std::holds_alternative<T>(v.base());
+  return !v.invalid() && std::holds_alternative<T>(v.base());
 }
 
 template <class T, class StdVariant>
