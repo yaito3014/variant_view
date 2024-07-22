@@ -21,6 +21,9 @@ namespace yk {
 template <class... Ts, class T>
 struct is_in_variant<boost::variant<Ts...>, T> : std::bool_constant<boost::mpl::contains<typename boost::variant<Ts...>::types, T>::type::value> {};
 
+template <class... Ts>
+struct is_variant_like<boost::variant<Ts...>> : std::true_type {};
+
 namespace detail {
 
 template <class... Ts>
@@ -41,9 +44,6 @@ template <class... Ts, class... Us, class T>
 struct is_subtype_in_variant_view<boost::variant<Ts...>, variant_view<boost::variant<Ts...>, Us...>, T> : std::disjunction<std::is_same<Us, T>...> {
   static_assert(boost::mpl::contains<typename boost::variant<Ts...>::types, T>::type::value, "T must be in variant's template parameters");
 };
-
-template <class... Ts>
-struct variant_like<boost::variant<Ts...>> : std::true_type {};
 
 template <class... Ts>
 struct make_variant_view_result<boost::variant<Ts...>> {

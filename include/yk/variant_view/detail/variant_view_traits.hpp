@@ -11,6 +11,15 @@ class variant_view;
 template <class Variant>
 struct variant_dispatch;
 
+template <class Variant>
+struct is_variant_like : std::false_type {};
+
+template <class Variant>
+inline constexpr bool is_variant_like_v = is_variant_like<Variant>::value;
+
+template <class Variant>
+concept variant_like = is_variant_like_v<Variant>;
+
 }  // namespace yk
 
 namespace yk::detail {
@@ -27,12 +36,6 @@ struct is_subtypes_in_variant_view : std::conjunction<is_subtype_in_variant_view
 template <class Variant, class VariantView, class... Ts>
 inline constexpr bool is_subtypes_in_variant_view_v = is_subtypes_in_variant_view<Variant, VariantView, Ts...>::value;
 
-template <class Variant>
-struct variant_like : std::false_type {};
-
-template <class Variant, class... Ts>
-struct variant_like<variant_view<Variant, Ts...>> : std::true_type {};
-
 template <class Variant, class... Ts>
 struct make_variant_view_result {
   using type = variant_view<Variant, Ts...>;
@@ -40,9 +43,6 @@ struct make_variant_view_result {
 
 template <class Variant, class... Ts>
 using make_variant_view_result_t = typename make_variant_view_result<Variant, Ts...>::type;
-
-template <class Variant>
-concept VariantLike = variant_like<Variant>::value;
 
 }  // namespace yk::detail
 

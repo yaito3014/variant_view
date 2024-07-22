@@ -27,7 +27,7 @@ template <class Variant, class... Ts>
 class variant_view {
 public:
   static_assert(sizeof...(Ts) > 0, "empty variant_view is not allowed");
-  static_assert(detail::VariantLike<std::remove_cvref_t<Variant>>, "argument should be variant-like type");
+  static_assert(is_variant_like_v<std::remove_cvref_t<Variant>>, "argument should be variant-like type");
   static_assert((... && is_in_variant_v<std::remove_cvref_t<Variant>, Ts>), "variant_view must be subset of original variant");
 
   using variant_type = std::remove_const_t<Variant>;
@@ -268,6 +268,9 @@ struct SupersetTypeCatcher {
 };
 
 }  // namespace detail
+
+template <class Variant, class... Ts>
+struct is_variant_like<variant_view<Variant, Ts...>> : std::true_type {};
 
 template <class Variant, class... Ts>
 struct variant_dispatch<variant_view<Variant, Ts...>> {

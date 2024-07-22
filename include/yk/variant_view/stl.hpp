@@ -12,6 +12,12 @@
 
 namespace yk {
 
+template <class... Ts, class T>
+struct is_in_variant<std::variant<Ts...>, T> : std::disjunction<std::is_same<Ts, T>...> {};
+
+template <class... Ts>
+struct is_variant_like<std::variant<Ts...>> : std::true_type {};
+
 template <class... Ts>
 struct variant_dispatch<std::variant<Ts...>> {
   template <class Visitor, class Variant>
@@ -35,17 +41,11 @@ struct is_subtype_in_variant_view<std::variant<Ts...>, variant_view<std::variant
 };
 
 template <class... Ts>
-struct variant_like<std::variant<Ts...>> : std::true_type {};
-
-template <class... Ts>
 struct make_variant_view_result<std::variant<Ts...>> {
   using type = variant_view<std::variant<Ts...>, Ts...>;
 };
 
 }  // namespace detail
-
-template <class... Ts, class T>
-struct is_in_variant<std::variant<Ts...>, T> : std::disjunction<std::is_same<Ts, T>...> {};
 
 template <class T, class... Ts>
 [[nodiscard]] constexpr bool holds_alternative(const std::variant<Ts...>& v) noexcept {
