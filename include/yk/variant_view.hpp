@@ -90,7 +90,8 @@ public:
   [[nodiscard]] constexpr auto operator->() noexcept
     requires(sizeof...(Ts) == 1);
 
-  [[nodiscard]] explicit constexpr operator bool() const noexcept;
+  [[nodiscard]] explicit constexpr operator bool() const noexcept
+    requires(sizeof...(Ts) == 1);
 
   template <class... Us>
   [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const noexcept {
@@ -235,7 +236,9 @@ template <class Variant, class... Ts>
 }
 
 template <class Variant, class... Ts>
-[[nodiscard]] constexpr variant_view<Variant, Ts...>::operator bool() const noexcept {
+[[nodiscard]] constexpr variant_view<Variant, Ts...>::operator bool() const noexcept
+  requires(sizeof...(Ts) == 1)
+{
   return yk::get<0>(this) != nullptr;
 }
 
