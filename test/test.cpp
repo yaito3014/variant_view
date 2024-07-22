@@ -361,6 +361,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::s
   }
 }
 
+BOOST_AUTO_TEST_CASE_TEMPLATE(Swap, Variant, YK_VARIANT(int, double, std::string)) {
+  Variant a = 33, b = 4;
+  auto aa = yk::make_variant_view<int>(a);
+  auto bb = yk::make_variant_view<int>(b);
+  BOOST_TEST((*aa == 33 && *bb == 4));
+  aa.swap(bb);
+  BOOST_TEST((*aa == 4 && *bb == 33));
+}
+
 BOOST_AUTO_TEST_CASE_TEMPLATE(Hash, Variant, YK_VARIANT(int, double, std::string)) {
   Variant a = 42, b = 42, c = 3.14;
   std::unordered_set<yk::variant_view<Variant, int, double>> set{

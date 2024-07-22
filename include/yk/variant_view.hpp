@@ -120,6 +120,8 @@ public:
   [[nodiscard]] constexpr bool operator==(const variant_view& other) const noexcept { return base() == other.base(); }
   [[nodiscard]] constexpr auto operator<=>(const variant_view& other) const noexcept { return base() <=> other.base(); }
 
+  constexpr void swap(variant_view& other) noexcept { std::swap(base_, other.base_); }
+
 private:
   template <class V, class... Us>
   friend class variant_view;
@@ -235,6 +237,11 @@ template <class Variant, class... Ts>
 template <class Variant, class... Ts>
 [[nodiscard]] constexpr variant_view<Variant, Ts...>::operator bool() const noexcept {
   return yk::get<0>(this) != nullptr;
+}
+
+template <class Variant, class... Ts>
+constexpr void swap(variant_view<Variant, Ts...>& x, variant_view<Variant, Ts...>& y) noexcept {
+  x.swap(y);
 }
 
 namespace detail {
