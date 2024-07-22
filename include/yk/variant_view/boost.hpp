@@ -45,19 +45,20 @@ struct is_subtype_in_variant_view<boost::variant<Ts...>, variant_view<boost::var
   static_assert(boost::mpl::contains<typename boost::variant<Ts...>::types, T>::type::value, "T must be in variant's template parameters");
 };
 
+}  // namespace detail
+
 template <class... Ts>
 struct make_variant_view_result<boost::variant<Ts...>> {
   template <class TypeList>
   struct helper {};
 
   template <class... Us>
-  struct helper<type_list<Us...>> {
+  struct helper<detail::type_list<Us...>> {
     using type = variant_view<boost::variant<Ts...>, Us...>;
   };
-  using type = typename helper<boost_variant_types_t<boost::variant<Ts...>>>::type;
-};
 
-}  // namespace detail
+  using type = typename helper<detail::boost_variant_types_t<boost::variant<Ts...>>>::type;
+};
 
 template <class... Ts>
 struct variant_dispatch<boost::variant<Ts...>> {

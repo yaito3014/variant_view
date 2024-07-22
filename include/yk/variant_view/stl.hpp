@@ -33,16 +33,16 @@ struct variant_dispatch<std::variant<Ts...>> {
   static constexpr std::size_t apply_index(const std::variant<Ts...>& var) noexcept { return var.index(); }
 };
 
+template <class... Ts>
+struct make_variant_view_result<std::variant<Ts...>> {
+  using type = variant_view<std::variant<Ts...>, Ts...>;
+};
+
 namespace detail {
 
 template <class... Ts, class... Us, class T>
 struct is_subtype_in_variant_view<std::variant<Ts...>, variant_view<std::variant<Ts...>, Us...>, T> : std::disjunction<std::is_same<Us, T>...> {
   static_assert((... || std::is_same_v<Ts, T>), "T must be in variant's template parameters");
-};
-
-template <class... Ts>
-struct make_variant_view_result<std::variant<Ts...>> {
-  using type = variant_view<std::variant<Ts...>, Ts...>;
 };
 
 }  // namespace detail
