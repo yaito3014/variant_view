@@ -144,7 +144,7 @@ namespace detail {
 
 template <class Visitor, class Variant, class... Ts>
 struct SupersetTypeCatcher {
-  using deduced_return_type = std::invoke_result_t<Visitor, core::pack_indexing_t<0, Ts...>>;
+  using deduced_return_type = std::invoke_result_t<Visitor, pack_indexing_t<0, Ts...>>;
 
   Visitor vis;
   template <class T>
