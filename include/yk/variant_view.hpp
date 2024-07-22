@@ -66,8 +66,8 @@ public:
     return *this;
   }
 
-  [[nodiscard]] const variant_type& base() const noexcept { return *base_; }
-  [[nodiscard]] variant_type& base() const noexcept
+  [[nodiscard]] constexpr const variant_type& base() const noexcept { return *base_; }
+  [[nodiscard]] constexpr variant_type& base() const noexcept
     requires(!std::is_const_v<Variant>)
   {
     return *base_;
