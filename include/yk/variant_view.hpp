@@ -46,7 +46,7 @@ public:
   template <class V, class... Us>
     requires(std::is_const_v<Variant> || !std::is_const_v<V>)
   constexpr variant_view(const variant_view<V, Us...>& other) noexcept : base_(other.base_) {
-    static_assert(detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Us...>, Us...>,
+    static_assert(detail::is_subtypes_in_variant_view_v<variant_view<std::remove_const_t<Variant>, Us...>, Us...>,
                   "only operations which take subset is allowed");
   }
 
@@ -255,13 +255,13 @@ struct SupersetTypeCatcher {
   }
 
   template <class T>
-    requires(!is_subtype_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Ts...>, std::remove_cvref_t<T>>)
+    requires(!is_in_variant_view_v<variant_view<std::remove_const_t<Variant>, Ts...>, std::remove_cvref_t<T>>)
   [[noreturn]] constexpr deduced_return_type operator()(T&&) const {
     throw std::bad_variant_access{};
   }
 
   template <class T>
-    requires(!is_subtype_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Ts...>, std::remove_cvref_t<T>>)
+    requires(!is_in_variant_view_v<variant_view<std::remove_const_t<Variant>, Ts...>, std::remove_cvref_t<T>>)
   [[noreturn]] constexpr deduced_return_type operator()(T&&) {
     throw std::bad_variant_access{};
   }
