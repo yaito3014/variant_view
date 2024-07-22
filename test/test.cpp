@@ -306,8 +306,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Get, Variant, YK_VARIANT(int, double, std::string)
     BOOST_TEST(yk::get<0>(&std::as_const(var)) != nullptr);
     BOOST_TEST(yk::get<1>(&std::as_const(var)) == nullptr);
 
-    auto const_view = yk::variant_view<const Variant, int, double>(var);
-    auto mutable_view = yk::variant_view<Variant, int, double>(var);
+    auto const_view = yk::variant_view<const Variant, double, int>(var);
+    auto mutable_view = yk::variant_view<Variant, double, int>(var);
 
     static_assert(std::is_same_v<const int*, decltype(yk::get<int>(&const_view))>);
     static_assert(std::is_same_v<int*, decltype(yk::get<int>(&mutable_view))>);
@@ -321,11 +321,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Get, Variant, YK_VARIANT(int, double, std::string)
     BOOST_TEST(yk::get<int>(&std::as_const(const_view)) != nullptr);
     BOOST_TEST(yk::get<double>(&std::as_const(const_view)) == nullptr);
 
-    BOOST_TEST(yk::get<0>(&const_view) != nullptr);
-    BOOST_TEST(yk::get<1>(&const_view) == nullptr);
+    BOOST_TEST(yk::get<0>(&const_view) == nullptr);
+    BOOST_TEST(yk::get<1>(&const_view) != nullptr);
 
-    BOOST_TEST(yk::get<0>(&std::as_const(const_view)) != nullptr);
-    BOOST_TEST(yk::get<1>(&std::as_const(const_view)) == nullptr);
+    BOOST_TEST(yk::get<0>(&std::as_const(const_view)) == nullptr);
+    BOOST_TEST(yk::get<1>(&std::as_const(const_view)) != nullptr);
   }
 }
 
