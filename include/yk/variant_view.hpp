@@ -310,11 +310,13 @@ template <class Variant, class... Ts>
 struct variant_dispatch<variant_view<Variant, Ts...>> {
   template <class Visitor, class V>
   static constexpr decltype(auto) apply_visit(Visitor&& vis, V&& view) {
+    if (view.invalid()) throw uninitialized_variant_view{};
     return yk::visit(detail::SupersetTypeCatcher<Visitor, Variant, Ts...>{std::forward<Visitor>(vis)}, view.base());
   }
 
   template <class Res, class Visitor, class V>
   static constexpr Res apply_visit(Visitor&& vis, V&& view) {
+    if (view.invalid()) throw uninitialized_variant_view{};
     return yk::visit<Res>(detail::SupersetTypeCatcher<Visitor, Variant, Ts...>{std::forward<Visitor>(vis)}, view.base());
   }
 };
