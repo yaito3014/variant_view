@@ -268,6 +268,42 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Get, Variant, YK_VARIANT(int, double, std::string)
 
   BOOST_REQUIRE_THROW(yk::get<double>(yk::make_variant_view(Variant{42}).template subview<double, std::string>()), std::bad_variant_access);
   BOOST_REQUIRE_THROW(yk::get<1>(yk::make_variant_view(Variant{42}).template subview<double, std::string>()), std::bad_variant_access);
+
+  {
+    Variant var = 42;
+    BOOST_TEST(yk::get<int>(&var) != nullptr);
+    BOOST_TEST(yk::get<double>(&var) == nullptr);
+
+    BOOST_TEST(yk::get<int>(&std::as_const(var)) != nullptr);
+    BOOST_TEST(yk::get<double>(&std::as_const(var)) == nullptr);
+
+    BOOST_TEST(yk::get<0>(&var) != nullptr);
+    BOOST_TEST(yk::get<1>(&var) == nullptr);
+
+    BOOST_TEST(yk::get<0>(&std::as_const(var)) != nullptr);
+    BOOST_TEST(yk::get<1>(&std::as_const(var)) == nullptr);
+
+    auto const_view = yk::variant_view<const Variant, int, double>(var);
+    auto mutable_view = yk::variant_view<Variant, int, double>(var);
+
+    static_assert(std::is_same_v<const int*, decltype(yk::get<int>(&const_view))>);
+    static_assert(std::is_same_v<int*, decltype(yk::get<int>(&mutable_view))>);
+
+    static_assert(std::is_same_v<const int*, decltype(yk::get<int>(&std::as_const(const_view)))>);
+    static_assert(std::is_same_v<int*, decltype(yk::get<int>(&std::as_const(mutable_view)))>);
+
+    BOOST_TEST(yk::get<int>(&const_view) != nullptr);
+    BOOST_TEST(yk::get<double>(&const_view) == nullptr);
+
+    BOOST_TEST(yk::get<int>(&std::as_const(const_view)) != nullptr);
+    BOOST_TEST(yk::get<double>(&std::as_const(const_view)) == nullptr);
+
+    BOOST_TEST(yk::get<0>(&const_view) != nullptr);
+    BOOST_TEST(yk::get<1>(&const_view) == nullptr);
+
+    BOOST_TEST(yk::get<0>(&std::as_const(const_view)) != nullptr);
+    BOOST_TEST(yk::get<1>(&std::as_const(const_view)) == nullptr);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // variant_view
