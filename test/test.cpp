@@ -282,14 +282,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Get, Variant, YK_VARIANT(int, double, std::string)
   BOOST_TEST(yk::get<0>(yk::make_variant_view(Variant{3.14}).template subview<double, std::string>()) == 3.14);
   BOOST_TEST(yk::get<1>(yk::make_variant_view(Variant{"foo"}).template subview<double, std::string>()) == "foo");
 
-  BOOST_REQUIRE_THROW(yk::get<double>(Variant{42}), std::bad_variant_access);
-  BOOST_REQUIRE_THROW(yk::get<1>(Variant{42}), std::bad_variant_access);
+  BOOST_REQUIRE_THROW(boost::ignore_unused(yk::get<double>(Variant{42})), std::bad_variant_access);
+  BOOST_REQUIRE_THROW(boost::ignore_unused(yk::get<1>(Variant{42})), std::bad_variant_access);
 
-  BOOST_REQUIRE_THROW(yk::get<double>(yk::make_variant_view(Variant{42})), std::bad_variant_access);
-  BOOST_REQUIRE_THROW(yk::get<1>(yk::make_variant_view(Variant{42})), std::bad_variant_access);
+  BOOST_REQUIRE_THROW(boost::ignore_unused(yk::get<double>(yk::make_variant_view(Variant{42}))), std::bad_variant_access);
+  BOOST_REQUIRE_THROW(boost::ignore_unused(yk::get<1>(yk::make_variant_view(Variant{42}))), std::bad_variant_access);
 
-  BOOST_REQUIRE_THROW(yk::get<double>(yk::make_variant_view(Variant{42}).template subview<double, std::string>()), std::bad_variant_access);
-  BOOST_REQUIRE_THROW(yk::get<1>(yk::make_variant_view(Variant{42}).template subview<double, std::string>()), std::bad_variant_access);
+  BOOST_REQUIRE_THROW(boost::ignore_unused(yk::get<double>(yk::make_variant_view(Variant{42}).template subview<double, std::string>())),
+                      std::bad_variant_access);
+  BOOST_REQUIRE_THROW(boost::ignore_unused(yk::get<1>(yk::make_variant_view(Variant{42}).template subview<double, std::string>())), std::bad_variant_access);
 
   {
     Variant var = 42;
@@ -328,7 +329,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Get, Variant, YK_VARIANT(int, double, std::string)
   }
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::string)) {
+struct S {
+  int member;
+};
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::string, S)) {
   Variant var = 42;
   {
     auto const_view = yk::variant_view<const Variant, int>(var);
@@ -339,6 +344,17 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::s
 
     BOOST_TEST((*const_view == 42));
     BOOST_TEST((*mutable_view == 42));
+  }
+  {
+    var = S{42};
+    auto const_view = yk::variant_view<const Variant, S>(var);
+    auto mutable_view = yk::variant_view<Variant, S>(var);
+
+    static_assert(std::is_same_v<const S*, decltype(const_view.operator->())>);
+    static_assert(std::is_same_v<S*, decltype(mutable_view.operator->())>);
+
+    BOOST_TEST((const_view->member == 42));
+    BOOST_TEST((mutable_view->member == 42));
   }
 }
 
