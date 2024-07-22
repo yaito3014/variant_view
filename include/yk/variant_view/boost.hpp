@@ -1,6 +1,9 @@
 #ifndef YK_VARIANT_VIEW_BOOST_HPP
 #define YK_VARIANT_VIEW_BOOST_HPP
 
+#include "yk/variant/boost/compare.hpp"
+#include "yk/variant/boost/traits.hpp"
+
 #include "yk/util/all_same.hpp"
 #include "yk/util/exactly_once.hpp"
 #include "yk/util/find_type_index.hpp"
@@ -11,7 +14,10 @@
 #include <boost/mpl/contains.hpp>
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/get.hpp>
+#include <boost/variant/multivisitors.hpp>
 #include <boost/variant/variant.hpp>
+
+#include <compare>
 #include <cstddef>
 #include <type_traits>
 #include <utility>
@@ -23,24 +29,6 @@ struct is_in_variant<boost::variant<Ts...>, T> : std::bool_constant<boost::mpl::
 
 template <class... Ts>
 struct is_variant_like<boost::variant<Ts...>> : std::true_type {};
-
-namespace detail {
-
-template <class... Ts>
-struct type_list {};
-
-template <class T, class R>
-struct to_type_list;
-
-template <class... Ts, class X>
-struct to_type_list<type_list<Ts...>, X> {
-  using type = type_list<Ts..., X>;
-};
-
-template <class BoostVariant>
-using boost_variant_types_t = typename boost::mpl::fold<typename BoostVariant::types, type_list<>, to_type_list<boost::mpl::_1, boost::mpl::_2>>::type;
-
-}  // namespace detail
 
 template <class... Ts, class... Us, class T>
 struct is_in_variant_view<variant_view<boost::variant<Ts...>, Us...>, T> : std::disjunction<std::is_same<Us, T>...> {

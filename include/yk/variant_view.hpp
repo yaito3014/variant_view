@@ -33,6 +33,11 @@ struct are_all_in_variant_view : std::conjunction<is_in_variant_view<VariantView
 template <class VariantView, class... Ts>
 inline constexpr bool are_all_in_variant_view_v = are_all_in_variant_view<VariantView, Ts...>::value;
 
+template <class Variant>
+struct compare_impl {
+  static constexpr auto apply(const Variant& lhs, const Variant& rhs) { return lhs <=> rhs; }
+};
+
 }  // namespace detail
 
 class uninitialized_variant_view : std::logic_error {
@@ -131,7 +136,9 @@ public:
   [[nodiscard]] constexpr bool invalid() const noexcept { return base_ == nullptr; }
 
   [[nodiscard]] constexpr bool operator==(const variant_view& other) const noexcept { return base() == other.base(); }
-  [[nodiscard]] constexpr auto operator<=>(const variant_view& other) const noexcept { return base() <=> other.base(); }
+  [[nodiscard]] constexpr auto operator<=>(const variant_view& other) const noexcept {
+    return detail::compare_impl<std::remove_const_t<Variant>>::apply(base(), other.base());
+  }
 
   constexpr void swap(variant_view& other) noexcept { std::swap(base_, other.base_); }
 
