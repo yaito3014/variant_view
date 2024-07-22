@@ -53,8 +53,6 @@ public:
 
   constexpr variant_view(const variant_view&) noexcept = default;
   constexpr variant_view(variant_view&&) noexcept = default;
-  constexpr variant_view& operator=(const variant_view&) noexcept = default;
-  constexpr variant_view& operator=(variant_view&&) noexcept = default;
 
   explicit constexpr variant_view(Variant& variant) noexcept : base_(&variant) {}
 
@@ -65,6 +63,9 @@ public:
   constexpr variant_view(const variant_view<V, Us...>& other) noexcept : base_(other.base_) {
     static_assert(detail::are_all_in_variant_view_v<variant_view<std::remove_const_t<Variant>, Us...>, Us...>, "only operations which take subset is allowed");
   }
+
+  constexpr variant_view& operator=(const variant_view&) noexcept = default;
+  constexpr variant_view& operator=(variant_view&&) noexcept = default;
 
   template <class... Us>
   constexpr variant_view& operator=(const variant_view<std::remove_const_t<Variant>, Us...>& other) noexcept {
