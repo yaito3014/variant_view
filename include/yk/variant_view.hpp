@@ -83,6 +83,26 @@ public:
     return variant_view<Variant, Us...>{*this};
   }
 
+  template <class Visitor>
+  constexpr decltype(auto) visit(Visitor&& vis) const {
+    return yk::visit(std::forward<Visitor>(vis), *this);
+  }
+
+  template <class Res, class Visitor>
+  constexpr Res visit(Visitor&& vis) const {
+    return yk::visit<Res>(std::forward<Visitor>(vis), *this);
+  }
+
+  template <class Visitor>
+  constexpr decltype(auto) visit(Visitor&& vis) {
+    return yk::visit(std::forward<Visitor>(vis), *this);
+  }
+
+  template <class Res, class Visitor>
+  constexpr Res visit(Visitor&& vis) {
+    return yk::visit<Res>(std::forward<Visitor>(vis), *this);
+  }
+
 private:
   template <class V, class... Us>
   friend class variant_view;
