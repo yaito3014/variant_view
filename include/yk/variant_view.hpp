@@ -71,6 +71,12 @@ public:
     return *base_;
   }
 
+  constexpr decltype(auto) operator*() const
+    requires(sizeof...(Ts) == 1);
+
+  constexpr decltype(auto) operator*()
+    requires(sizeof...(Ts) == 1);
+
   template <class... Us>
   [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const {
     static_assert(detail::is_subtypes_in_variant_view_v<std::remove_const_t<Variant>, variant_view<std::remove_const_t<Variant>, Us...>, Us...>);
@@ -162,6 +168,20 @@ constexpr decltype(auto) get(variant_view<Variant, Ts...>&& view) {
 template <std::size_t I, class Variant, class... Ts>
 constexpr decltype(auto) get(const variant_view<Variant, Ts...>&& view) {
   return yk::get<pack_indexing_t<I, Ts...>>(std::move(view).base());
+}
+
+template <class Variant, class... Ts>
+constexpr decltype(auto) variant_view<Variant, Ts...>::operator*() const
+  requires(sizeof...(Ts) == 1)
+{
+  return yk::get<0>(*this);
+}
+
+template <class Variant, class... Ts>
+constexpr decltype(auto) variant_view<Variant, Ts...>::operator*()
+  requires(sizeof...(Ts) == 1)
+{
+  return yk::get<0>(*this);
 }
 
 template <class T, class VariantView>
