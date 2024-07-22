@@ -346,9 +346,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::s
     BOOST_TEST((*mutable_view == 42));
   }
   {
-    var = S{42};
     auto const_view = yk::variant_view<const Variant, S>(var);
     auto mutable_view = yk::variant_view<Variant, S>(var);
+
+    BOOST_TEST(!static_cast<bool>(const_view));
+    var = S{42};
+    BOOST_TEST(static_cast<bool>(const_view));
 
     static_assert(std::is_same_v<const S*, decltype(const_view.operator->())>);
     static_assert(std::is_same_v<S*, decltype(mutable_view.operator->())>);

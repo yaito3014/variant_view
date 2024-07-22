@@ -84,11 +84,13 @@ public:
   [[nodiscard]] constexpr decltype(auto) operator*()
     requires(sizeof...(Ts) == 1);
 
-  [[nodiscard]] constexpr auto operator->() const
+  [[nodiscard]] constexpr auto operator->() const noexcept
     requires(sizeof...(Ts) == 1);
 
-  [[nodiscard]] constexpr auto operator->()
+  [[nodiscard]] constexpr auto operator->() noexcept
     requires(sizeof...(Ts) == 1);
+
+  [[nodiscard]] explicit constexpr operator bool() const noexcept;
 
   template <class... Us>
   [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const noexcept {
@@ -217,17 +219,22 @@ template <std::size_t I, class Variant, class... Ts>
 }
 
 template <class Variant, class... Ts>
-[[nodiscard]] constexpr auto variant_view<Variant, Ts...>::operator->() const
+[[nodiscard]] constexpr auto variant_view<Variant, Ts...>::operator->() const noexcept
   requires(sizeof...(Ts) == 1)
 {
   return yk::get<0>(this);
 }
 
 template <class Variant, class... Ts>
-[[nodiscard]] constexpr auto variant_view<Variant, Ts...>::operator->()
+[[nodiscard]] constexpr auto variant_view<Variant, Ts...>::operator->() noexcept
   requires(sizeof...(Ts) == 1)
 {
   return yk::get<0>(this);
+}
+
+template <class Variant, class... Ts>
+[[nodiscard]] constexpr variant_view<Variant, Ts...>::operator bool() const noexcept {
+  return yk::get<0>(this) != nullptr;
 }
 
 namespace detail {
