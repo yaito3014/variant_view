@@ -2,6 +2,7 @@
 #define YK_VARIANT_VIEW_INCLUDE_BOOST 1
 #include "yk/util/overloaded.hpp"
 #include "yk/variant_view.hpp"
+#include "yk/variant_view/hash.hpp"
 
 #define BOOST_TEST_MODULE yk_test
 #include <boost/test/unit_test.hpp>
@@ -15,6 +16,7 @@
 #include <string>
 #include <tuple>
 #include <type_traits>
+#include <unordered_set>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -318,6 +320,16 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::s
     BOOST_TEST((*const_view == 42));
     BOOST_TEST((*mutable_view == 42));
   }
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(Hash, Variant, YK_VARIANT(int, double, std::string)) {
+  Variant a = 42, b = 42, c = 3.14;
+  std::unordered_set<yk::variant_view<Variant, int, double>> set{
+      yk::variant_view<Variant, int, double>{a},
+      yk::variant_view<Variant, int, double>{b},
+      yk::variant_view<Variant, int, double>{c},
+  };
+  BOOST_TEST(set.size() == 2);
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // variant_view

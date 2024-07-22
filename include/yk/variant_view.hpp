@@ -16,6 +16,7 @@
 #include "yk/util/pack_indexing.hpp"
 #include "yk/variant/traits.hpp"
 
+#include <compare>
 #include <cstddef>
 #include <type_traits>
 #include <utility>
@@ -100,6 +101,9 @@ public:
 
   template <class Res, class Visitor>
   constexpr Res visit(Visitor&& vis);
+
+  [[nodiscard]] constexpr bool operator==(const variant_view& other) const noexcept { return base() == other.base(); }
+  [[nodiscard]] constexpr auto operator<=>(const variant_view& other) const noexcept { return base() <=> other.base(); }
 
 private:
   template <class V, class... Us>
