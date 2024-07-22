@@ -78,10 +78,10 @@ public:
     return *base_;
   }
 
-  constexpr decltype(auto) operator*() const
+  [[nodiscard]] constexpr decltype(auto) operator*() const
     requires(sizeof...(Ts) == 1);
 
-  constexpr decltype(auto) operator*()
+  [[nodiscard]] constexpr decltype(auto) operator*()
     requires(sizeof...(Ts) == 1);
 
   template <class... Us>
@@ -106,8 +106,8 @@ public:
   template <class Res, class Visitor>
   constexpr Res visit(Visitor&& vis);
 
-  constexpr std::size_t index() const noexcept { return detail::variant_index_impl<std::remove_const_t<Variant>>::apply(base()); }
-  constexpr bool invalid() const noexcept { return base_ == nullptr; }
+  [[nodiscard]] constexpr std::size_t index() const noexcept { return detail::variant_index_impl<std::remove_const_t<Variant>>::apply(base()); }
+  [[nodiscard]] constexpr bool invalid() const noexcept { return base_ == nullptr; }
 
   [[nodiscard]] constexpr bool operator==(const variant_view& other) const noexcept { return base() == other.base(); }
   [[nodiscard]] constexpr auto operator<=>(const variant_view& other) const noexcept { return base() <=> other.base(); }
@@ -160,36 +160,36 @@ constexpr Res variant_view<Variant, Ts...>::visit(Visitor&& vis) {
 
 template <class T, class VariantView>
   requires specialization_of<std::remove_cvref_t<VariantView>, variant_view>
-constexpr decltype(auto) get(VariantView&& view) {
+[[nodiscard]] constexpr decltype(auto) get(VariantView&& view) {
   return yk::get<T>(std::forward<VariantView>(view).base());
 }
 
 template <std::size_t I, class Variant, class... Ts>
-constexpr decltype(auto) get(const variant_view<Variant, Ts...>& view) {
+[[nodiscard]] constexpr decltype(auto) get(const variant_view<Variant, Ts...>& view) {
   return yk::get<pack_indexing_t<I, Ts...>>(view.base());
 }
 template <std::size_t I, class Variant, class... Ts>
-constexpr decltype(auto) get(variant_view<Variant, Ts...>& view) {
+[[nodiscard]] constexpr decltype(auto) get(variant_view<Variant, Ts...>& view) {
   return yk::get<pack_indexing_t<I, Ts...>>(view.base());
 }
 template <std::size_t I, class Variant, class... Ts>
-constexpr decltype(auto) get(variant_view<Variant, Ts...>&& view) {
+[[nodiscard]] constexpr decltype(auto) get(variant_view<Variant, Ts...>&& view) {
   return yk::get<pack_indexing_t<I, Ts...>>(std::move(view).base());
 }
 template <std::size_t I, class Variant, class... Ts>
-constexpr decltype(auto) get(const variant_view<Variant, Ts...>&& view) {
+[[nodiscard]] constexpr decltype(auto) get(const variant_view<Variant, Ts...>&& view) {
   return yk::get<pack_indexing_t<I, Ts...>>(std::move(view).base());
 }
 
 template <class Variant, class... Ts>
-constexpr decltype(auto) variant_view<Variant, Ts...>::operator*() const
+[[nodiscard]] constexpr decltype(auto) variant_view<Variant, Ts...>::operator*() const
   requires(sizeof...(Ts) == 1)
 {
   return yk::get<0>(*this);
 }
 
 template <class Variant, class... Ts>
-constexpr decltype(auto) variant_view<Variant, Ts...>::operator*()
+[[nodiscard]] constexpr decltype(auto) variant_view<Variant, Ts...>::operator*()
   requires(sizeof...(Ts) == 1)
 {
   return yk::get<0>(*this);
@@ -197,13 +197,13 @@ constexpr decltype(auto) variant_view<Variant, Ts...>::operator*()
 
 template <class T, class VariantView>
   requires specialization_of<std::remove_const_t<VariantView>, variant_view>
-constexpr auto get(VariantView* view) {
+[[nodiscard]] constexpr auto get(VariantView* view) {
   return yk::get<T>(&view->base());
 }
 
 template <std::size_t I, class VariantView>
   requires specialization_of<std::remove_const_t<VariantView>, variant_view>
-constexpr auto get(VariantView* view) {
+[[nodiscard]] constexpr auto get(VariantView* view) {
   return yk::get<I>(&view->base());
 }
 

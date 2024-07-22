@@ -130,7 +130,7 @@ template <class T, class... Ts, class... Us>
 
 template <class T, class BoostVariant>
   requires specialization_of<std::remove_cvref_t<BoostVariant>, boost::variant>
-constexpr decltype(auto) get(BoostVariant&& variant) try {
+[[nodiscard]] constexpr decltype(auto) get(BoostVariant&& variant) try {
   return boost::get<T>(std::forward<BoostVariant>(variant));
 } catch (const boost::bad_get&) {
   throw std::bad_variant_access{};
@@ -138,7 +138,7 @@ constexpr decltype(auto) get(BoostVariant&& variant) try {
 
 template <std::size_t I, class BoostVariant>
   requires specialization_of<std::remove_cvref_t<BoostVariant>, boost::variant>
-constexpr decltype(auto) get(BoostVariant&& variant) try {
+[[nodiscard]] constexpr decltype(auto) get(BoostVariant&& variant) try {
   return [&]<class... Vs>(detail::type_list<Vs...>) -> decltype(auto) {
     return boost::get<pack_indexing_t<I, Vs...>>(std::forward<BoostVariant>(variant));
   }(detail::boost_variant_types_t<std::remove_cvref_t<BoostVariant>>{});
@@ -148,13 +148,13 @@ constexpr decltype(auto) get(BoostVariant&& variant) try {
 
 template <class T, class BoostVariant>
   requires specialization_of<std::remove_const_t<BoostVariant>, boost::variant>
-constexpr auto get(BoostVariant* variant) noexcept {
+[[nodiscard]] constexpr auto get(BoostVariant* variant) noexcept {
   return boost::get<T>(variant);
 }
 
 template <std::size_t I, class BoostVariant>
   requires specialization_of<std::remove_const_t<BoostVariant>, boost::variant>
-constexpr auto get(BoostVariant* variant) noexcept {
+[[nodiscard]] constexpr auto get(BoostVariant* variant) noexcept {
   return [&]<class... Vs>(detail::type_list<Vs...>) {
     return boost::get<pack_indexing_t<I, Vs...>>(variant);
   }(detail::boost_variant_types_t<std::remove_cvref_t<BoostVariant>>{});

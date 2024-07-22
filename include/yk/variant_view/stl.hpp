@@ -78,25 +78,25 @@ template <class T, class... Ts, class... Us>
 
 template <class T, class StdVariant>
   requires specialization_of<std::remove_cvref_t<StdVariant>, std::variant>
-constexpr decltype(auto) get(StdVariant&& variant) {
+[[nodiscard]] constexpr decltype(auto) get(StdVariant&& variant) {
   return std::get<T>(std::forward<StdVariant>(variant));
 }
 
 template <std::size_t I, class StdVariant>
   requires specialization_of<std::remove_cvref_t<StdVariant>, std::variant>
-constexpr decltype(auto) get(StdVariant&& variant) {
+[[nodiscard]] constexpr decltype(auto) get(StdVariant&& variant) {
   return std::get<I>(std::forward<StdVariant>(variant));
 }
 
 template <class T, class StdVariant>
   requires specialization_of<std::remove_const_t<StdVariant>, std::variant>
-constexpr auto get(StdVariant* variant) noexcept {
+[[nodiscard]] constexpr auto get(StdVariant* variant) noexcept {
   return std::get_if<T>(variant);
 }
 
 template <std::size_t I, class StdVariant>
   requires specialization_of<std::remove_const_t<StdVariant>, std::variant>
-constexpr auto get(StdVariant* variant) noexcept {
+[[nodiscard]] constexpr auto get(StdVariant* variant) noexcept {
   return std::get_if<I>(variant);
 }
 
