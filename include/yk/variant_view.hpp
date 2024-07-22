@@ -17,6 +17,7 @@
 #include "yk/variant/traits.hpp"
 #include "yk/variant_view/traits.hpp"
 
+#include <cassert>
 #include <compare>
 #include <cstddef>
 #include <type_traits>
@@ -33,6 +34,11 @@ template <class VariantView, class... Ts>
 inline constexpr bool are_all_in_variant_view_v = are_all_in_variant_view<VariantView, Ts...>::value;
 
 }  // namespace detail
+
+class uninitialized_variant_view : std::logic_error {
+public:
+  uninitialized_variant_view() : logic_error("accessing empty variant_view") {}
+};
 
 template <class Variant, class... Ts>
 class variant_view {
@@ -66,15 +72,20 @@ public:
     return *this;
   }
 
-  [[nodiscard]] constexpr const variant_type& base() const noexcept { return *base_; }
+  [[nodiscard]] constexpr const variant_type& base() const noexcept {
+    assert(base_ != nullptr);
+    return *base_;
+  }
   [[nodiscard]] constexpr variant_type& base() const noexcept
     requires(!std::is_const_v<Variant>)
   {
+    assert(base_ != nullptr);
     return *base_;
   }
   [[nodiscard]] constexpr variant_type& base() noexcept
     requires(!std::is_const_v<Variant>)
   {
+    assert(base_ != nullptr);
     return *base_;
   }
 
@@ -172,23 +183,28 @@ constexpr Res variant_view<Variant, Ts...>::visit(Visitor&& vis) {
 template <class T, class VariantView>
   requires specialization_of<std::remove_cvref_t<VariantView>, variant_view>
 [[nodiscard]] constexpr decltype(auto) get(VariantView&& view) {
+  if (view.invalid()) throw uninitialized_variant_view{};
   return yk::get<T>(std::forward<VariantView>(view).base());
 }
 
 template <std::size_t I, class Variant, class... Ts>
 [[nodiscard]] constexpr decltype(auto) get(const variant_view<Variant, Ts...>& view) {
+  if (view.invalid()) throw uninitialized_variant_view{};
   return yk::get<pack_indexing_t<I, Ts...>>(view.base());
 }
 template <std::size_t I, class Variant, class... Ts>
 [[nodiscard]] constexpr decltype(auto) get(variant_view<Variant, Ts...>& view) {
+  if (view.invalid()) throw uninitialized_variant_view{};
   return yk::get<pack_indexing_t<I, Ts...>>(view.base());
 }
 template <std::size_t I, class Variant, class... Ts>
 [[nodiscard]] constexpr decltype(auto) get(variant_view<Variant, Ts...>&& view) {
+  if (view.invalid()) throw uninitialized_variant_view{};
   return yk::get<pack_indexing_t<I, Ts...>>(std::move(view).base());
 }
 template <std::size_t I, class Variant, class... Ts>
 [[nodiscard]] constexpr decltype(auto) get(const variant_view<Variant, Ts...>&& view) {
+  if (view.invalid()) throw uninitialized_variant_view{};
   return yk::get<pack_indexing_t<I, Ts...>>(std::move(view).base());
 }
 
@@ -196,6 +212,7 @@ template <class Variant, class... Ts>
 [[nodiscard]] constexpr decltype(auto) variant_view<Variant, Ts...>::operator*() const
   requires(sizeof...(Ts) == 1)
 {
+  if (invalid()) throw uninitialized_variant_view{};
   return yk::get<0>(*this);
 }
 
@@ -203,21 +220,25 @@ template <class Variant, class... Ts>
 [[nodiscard]] constexpr decltype(auto) variant_view<Variant, Ts...>::operator*()
   requires(sizeof...(Ts) == 1)
 {
+  if (invalid()) throw uninitialized_variant_view{};
   return yk::get<0>(*this);
 }
 
 template <class T, class VariantView>
   requires specialization_of<std::remove_const_t<VariantView>, variant_view>
-[[nodiscard]] constexpr auto get(VariantView* view) {
+[[nodiscard]] constexpr auto get(VariantView* view) noexcept {
+  if (view == nullptr || view->invalid()) return static_cast<decltype(yk::get<T>(&view->base()))>(nullptr);
   return yk::get<T>(&view->base());
 }
 
 template <std::size_t I, class Variant, class... Ts>
-[[nodiscard]] constexpr decltype(auto) get(const variant_view<Variant, Ts...>* view) {
+[[nodiscard]] constexpr auto get(const variant_view<Variant, Ts...>* view) noexcept {
+  if (view == nullptr || view->invalid()) return static_cast<decltype(yk::get<pack_indexing_t<I, Ts...>>(&view->base()))>(nullptr);
   return yk::get<pack_indexing_t<I, Ts...>>(&view->base());
 }
 template <std::size_t I, class Variant, class... Ts>
-[[nodiscard]] constexpr decltype(auto) get(variant_view<Variant, Ts...>* view) {
+[[nodiscard]] constexpr auto get(variant_view<Variant, Ts...>* view) noexcept {
+  if (view == nullptr || view->invalid()) return static_cast<decltype(yk::get<pack_indexing_t<I, Ts...>>(&view->base()))>(nullptr);
   return yk::get<pack_indexing_t<I, Ts...>>(&view->base());
 }
 
@@ -225,6 +246,7 @@ template <class Variant, class... Ts>
 [[nodiscard]] constexpr auto variant_view<Variant, Ts...>::operator->() const noexcept
   requires(sizeof...(Ts) == 1)
 {
+  assert(base_ != nullptr);
   return yk::get<0>(this);
 }
 
@@ -232,6 +254,7 @@ template <class Variant, class... Ts>
 [[nodiscard]] constexpr auto variant_view<Variant, Ts...>::operator->() noexcept
   requires(sizeof...(Ts) == 1)
 {
+  assert(base_ != nullptr);
   return yk::get<0>(this);
 }
 
@@ -239,7 +262,7 @@ template <class Variant, class... Ts>
 [[nodiscard]] constexpr variant_view<Variant, Ts...>::operator bool() const noexcept
   requires(sizeof...(Ts) == 1)
 {
-  return yk::get<0>(this) != nullptr;
+  return base_ != nullptr && yk::get<0>(this) != nullptr;
 }
 
 template <class Variant, class... Ts>

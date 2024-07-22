@@ -114,6 +114,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Initialization, Variant, YK_VARIANT(int, double)) 
   }
 
   BOOST_TEST((yk::variant_view<Variant, int, double>{}.invalid()));
+  BOOST_TEST((yk::variant_view<const Variant, int, double>{}.invalid()));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(SubView, Variant, YK_VARIANT(int, float, double)) {
@@ -344,6 +345,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::s
 
     BOOST_TEST((*const_view == 42));
     BOOST_TEST((*mutable_view == 42));
+
+    BOOST_REQUIRE_THROW((boost::ignore_unused(*yk::variant_view<const Variant, int>{})), yk::uninitialized_variant_view);
+    BOOST_REQUIRE_THROW((boost::ignore_unused(*yk::variant_view<Variant, int>{})), yk::uninitialized_variant_view);
+
+    BOOST_TEST(!static_cast<bool>(yk::variant_view<const Variant, int>{}));
+    BOOST_TEST(!static_cast<bool>(yk::variant_view<Variant, int>{}));
   }
   {
     auto const_view = yk::variant_view<const Variant, S>(var);
