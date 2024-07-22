@@ -80,6 +80,18 @@ constexpr decltype(auto) get(StdVariant&& variant) {
   return std::get<I>(std::forward<StdVariant>(variant));
 }
 
+template <class T, class StdVariant>
+  requires specialization_of<std::remove_const_t<StdVariant>, std::variant>
+constexpr auto get(StdVariant* variant) noexcept {
+  return std::get_if<T>(variant);
+}
+
+template <std::size_t I, class StdVariant>
+  requires specialization_of<std::remove_const_t<StdVariant>, std::variant>
+constexpr auto get(StdVariant* variant) noexcept {
+  return std::get_if<I>(variant);
+}
+
 template <class... Ts>
 variant_view(const std::variant<Ts...>&) -> variant_view<const std::variant<Ts...>, Ts...>;
 

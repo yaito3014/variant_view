@@ -138,6 +138,20 @@ constexpr decltype(auto) get(BoostVariant&& variant) try {
   throw std::bad_variant_access{};
 }
 
+template <class T, class BoostVariant>
+  requires specialization_of<std::remove_const_t<BoostVariant>, boost::variant>
+constexpr auto get(BoostVariant* variant) noexcept {
+  return boost::get<T>(variant);
+}
+
+template <std::size_t I, class BoostVariant>
+  requires specialization_of<std::remove_const_t<BoostVariant>, boost::variant>
+constexpr auto get(BoostVariant* variant) noexcept {
+  return [&]<class... Vs>(detail::type_list<Vs...>) {
+    return boost::get<pack_indexing_t<I, Vs...>>(variant);
+  }(detail::boost_variant_types_t<std::remove_cvref_t<BoostVariant>>{});
+}
+
 // template <class... Ts>
 // variant_view(const boost::variant<Ts...>&) -> /* impossible due to boost::recursive_variant_ */;
 

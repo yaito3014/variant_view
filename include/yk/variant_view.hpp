@@ -67,6 +67,11 @@ public:
   }
 
   [[nodiscard]] const variant_type& base() const noexcept { return *base_; }
+  [[nodiscard]] variant_type& base() const noexcept
+    requires(!std::is_const_v<Variant>)
+  {
+    return *base_;
+  }
   [[nodiscard]] variant_type& base() noexcept
     requires(!std::is_const_v<Variant>)
   {
@@ -128,6 +133,18 @@ constexpr decltype(auto) get(variant_view<Variant, Ts...>&& view) {
 template <std::size_t I, class Variant, class... Ts>
 constexpr decltype(auto) get(const variant_view<Variant, Ts...>&& view) {
   return yk::get<pack_indexing_t<I, Ts...>>(std::move(view).base());
+}
+
+template <class T, class VariantView>
+  requires specialization_of<std::remove_const_t<VariantView>, variant_view>
+constexpr auto get(VariantView* view) {
+  return yk::get<T>(&view->base());
+}
+
+template <std::size_t I, class VariantView>
+  requires specialization_of<std::remove_const_t<VariantView>, variant_view>
+constexpr auto get(VariantView* view) {
+  return yk::get<I>(&view->base());
 }
 
 namespace detail {
