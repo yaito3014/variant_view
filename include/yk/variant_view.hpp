@@ -72,7 +72,7 @@ public:
   {
     return *base_;
   }
-  [[nodiscard]] variant_type& base() noexcept
+  [[nodiscard]] constexpr variant_type& base() noexcept
     requires(!std::is_const_v<Variant>)
   {
     return *base_;
