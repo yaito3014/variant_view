@@ -386,14 +386,17 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::s
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(RelationalOperator, Variant, YK_VARIANT(int, double, std::string)) {
   Variant a = 12, b = 3.14;
-  auto a_view = yk::make_variant_view(a);
-  auto b_view = yk::make_variant_view(b);
+  auto a_view = yk::make_variant_view<int, double, std::string>(a);
+  auto b_view = yk::make_variant_view<int, double, std::string>(b);
 
   BOOST_TEST(((a_view <=> b_view) < 0));
   BOOST_TEST(((a_view <=> a_view) == 0));
   BOOST_TEST(((b_view <=> a_view) > 0));
 
   BOOST_TEST((yk::compare_three_way{}(a, b) == yk::compare_three_way{}(a_view, b_view)));
+
+  BOOST_TEST(((yk::variant_view<Variant, int, double, std::string>{} <=> yk::variant_view<Variant, int, double, std::string>{}) == 0));
+  BOOST_TEST(((yk::variant_view<Variant, int, double, std::string>{} <=> a_view) < 0));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(Swap, Variant, YK_VARIANT(int, double, std::string)) {

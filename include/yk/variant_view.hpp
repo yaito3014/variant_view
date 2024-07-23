@@ -35,6 +35,7 @@ inline constexpr bool are_all_in_variant_view_v = are_all_in_variant_view<Varian
 
 template <class Variant>
 struct compare_impl {
+  using category_t = decltype(std::declval<Variant>() <=> std::declval<Variant>());
   static constexpr auto apply(const Variant& lhs, const Variant& rhs) { return lhs <=> rhs; }
 };
 
@@ -137,7 +138,16 @@ public:
 
   [[nodiscard]] constexpr bool operator==(const variant_view& other) const noexcept { return base() == other.base(); }
   [[nodiscard]] constexpr auto operator<=>(const variant_view& other) const noexcept {
-    return detail::compare_impl<std::remove_const_t<Variant>>::apply(base(), other.base());
+    return [&]() -> typename detail::compare_impl<std::remove_const_t<Variant>>::category_t {
+      if (invalid()) {
+        if (other.invalid())
+          return std::strong_ordering::equivalent;
+        else
+          return std::strong_ordering::less;
+      }
+      if (other.invalid()) return std::strong_ordering::greater;
+      return detail::compare_impl<std::remove_const_t<Variant>>::apply(base(), other.base());
+    }();
   }
 
   constexpr void swap(variant_view& other) noexcept { std::swap(base_, other.base_); }
