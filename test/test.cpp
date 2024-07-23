@@ -389,8 +389,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(ComparisonOperator, Variant, YK_VARIANT(int, doubl
   auto a_view = yk::make_variant_view<int, double>(a);
   auto b_view = yk::make_variant_view<int, double>(b);
 
+  BOOST_TEST((a == a_view));
+  BOOST_TEST((a != b_view));
+
   BOOST_TEST((a_view == a_view));
   BOOST_TEST((a_view != b_view));
+
+  BOOST_TEST(((a <=> b_view) < 0));
+  BOOST_TEST(((a <=> a_view) == 0));
+  BOOST_TEST(((b <=> a_view) > 0));
 
   BOOST_TEST(((a_view <=> b_view) < 0));
   BOOST_TEST(((a_view <=> a_view) == 0));
