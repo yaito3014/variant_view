@@ -136,7 +136,16 @@ public:
   [[nodiscard]] constexpr std::size_t index() const noexcept { return variant_dispatch<std::remove_const_t<Variant>>::apply_index(base()); }
   [[nodiscard]] constexpr bool invalid() const noexcept { return base_ == nullptr; }
 
-  [[nodiscard]] constexpr bool operator==(const variant_view& other) const noexcept { return base() == other.base(); }
+  [[nodiscard]] constexpr bool operator==(const variant_view& other) const noexcept {
+    if (invalid()) {
+      if (other.invalid())
+        return true;
+      else
+        return false;
+    }
+    if (other.invalid()) return false;
+    return base() == other.base();
+  }
   [[nodiscard]] constexpr auto operator<=>(const variant_view& other) const noexcept {
     return [&]() -> typename detail::compare_impl<std::remove_const_t<Variant>>::category_t {
       if (invalid()) {

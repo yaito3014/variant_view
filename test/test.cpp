@@ -384,10 +384,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(SimpleGet, Variant, YK_VARIANT(int, double, std::s
   }
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(RelationalOperator, Variant, YK_VARIANT(int, double, std::string)) {
+BOOST_AUTO_TEST_CASE_TEMPLATE(ComparisonOperator, Variant, YK_VARIANT(int, double, std::string)) {
   Variant a = 12, b = 3.14;
-  auto a_view = yk::make_variant_view<int, double, std::string>(a);
-  auto b_view = yk::make_variant_view<int, double, std::string>(b);
+  auto a_view = yk::make_variant_view<int, double>(a);
+  auto b_view = yk::make_variant_view<int, double>(b);
+
+  BOOST_TEST((a_view == a_view));
+  BOOST_TEST((a_view != b_view));
 
   BOOST_TEST(((a_view <=> b_view) < 0));
   BOOST_TEST(((a_view <=> a_view) == 0));
@@ -395,8 +398,18 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(RelationalOperator, Variant, YK_VARIANT(int, doubl
 
   BOOST_TEST((yk::compare_three_way{}(a, b) == yk::compare_three_way{}(a_view, b_view)));
 
-  BOOST_TEST(((yk::variant_view<Variant, int, double, std::string>{} <=> yk::variant_view<Variant, int, double, std::string>{}) == 0));
-  BOOST_TEST(((yk::variant_view<Variant, int, double, std::string>{} <=> a_view) < 0));
+  BOOST_TEST((yk::variant_view<Variant, int, double>{} == yk::variant_view<Variant, int, double>{}));
+  BOOST_TEST((yk::variant_view<Variant, int, double>{} != a_view));
+
+  BOOST_TEST(((yk::variant_view<Variant, int, double>{} <=> yk::variant_view<Variant, int, double>{}) == 0));
+  BOOST_TEST(((yk::variant_view<Variant, int, double>{} <=> a_view) < 0));
+
+  a = "foo";
+  b = "bar";
+
+  BOOST_TEST((a_view != b_view));
+
+  BOOST_TEST(((a_view <=> b_view) > 0));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(Swap, Variant, YK_VARIANT(int, double, std::string)) {
