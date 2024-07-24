@@ -89,12 +89,6 @@ public:
     assert(base_ != nullptr);
     return *base_;
   }
-  [[nodiscard]] constexpr variant_type& base() noexcept
-    requires(!std::is_const_v<Variant>)
-  {
-    assert(base_ != nullptr);
-    return *base_;
-  }
 
   [[nodiscard]] constexpr decltype(auto) operator*() const
     requires(sizeof...(Ts) == 1);
