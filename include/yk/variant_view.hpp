@@ -110,12 +110,6 @@ public:
   template <class Res, class Visitor>
   constexpr Res visit(Visitor&& vis) const;
 
-  template <class Visitor>
-  constexpr decltype(auto) visit(Visitor&& vis);
-
-  template <class Res, class Visitor>
-  constexpr Res visit(Visitor&& vis);
-
   [[nodiscard]] constexpr std::size_t index() const noexcept { return variant_dispatch<std::remove_const_t<Variant>>::apply_index(base()); }
   [[nodiscard]] constexpr bool invalid() const noexcept { return base_ == nullptr; }
 
@@ -183,18 +177,6 @@ constexpr decltype(auto) variant_view<Variant, Ts...>::visit(Visitor&& vis) cons
 template <class Variant, class... Ts>
 template <class Res, class Visitor>
 constexpr Res variant_view<Variant, Ts...>::visit(Visitor&& vis) const {
-  return yk::visit<Res>(std::forward<Visitor>(vis), *this);
-}
-
-template <class Variant, class... Ts>
-template <class Visitor>
-constexpr decltype(auto) variant_view<Variant, Ts...>::visit(Visitor&& vis) {
-  return yk::visit(std::forward<Visitor>(vis), *this);
-}
-
-template <class Variant, class... Ts>
-template <class Res, class Visitor>
-constexpr Res variant_view<Variant, Ts...>::visit(Visitor&& vis) {
   return yk::visit<Res>(std::forward<Visitor>(vis), *this);
 }
 
