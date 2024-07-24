@@ -100,12 +100,7 @@ public:
     requires(sizeof...(Ts) == 1);
 
   template <class... Us>
-  [[nodiscard]] constexpr variant_view<const Variant, Us...> subview() const noexcept {
-    return variant_view<const Variant, Us...>{*this};
-  }
-
-  template <class... Us>
-  [[nodiscard]] constexpr variant_view<Variant, Us...> subview() noexcept {
+  [[nodiscard]] constexpr variant_view<Variant, Us...> subview() const noexcept {
     return variant_view<Variant, Us...>{*this};
   }
 
