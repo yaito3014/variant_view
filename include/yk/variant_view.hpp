@@ -93,13 +93,7 @@ public:
   [[nodiscard]] constexpr decltype(auto) operator*() const
     requires(sizeof...(Ts) == 1);
 
-  [[nodiscard]] constexpr decltype(auto) operator*()
-    requires(sizeof...(Ts) == 1);
-
   [[nodiscard]] constexpr auto operator->() const
-    requires(sizeof...(Ts) == 1);
-
-  [[nodiscard]] constexpr auto operator->()
     requires(sizeof...(Ts) == 1);
 
   [[nodiscard]] explicit constexpr operator bool() const noexcept
@@ -264,25 +258,7 @@ template <class Variant, class... Ts>
 }
 
 template <class Variant, class... Ts>
-[[nodiscard]] constexpr decltype(auto) variant_view<Variant, Ts...>::operator*()
-  requires(sizeof...(Ts) == 1)
-{
-  if (invalid()) throw uninitialized_variant_view{};
-  return yk::get<0>(*this);
-}
-
-template <class Variant, class... Ts>
 [[nodiscard]] constexpr auto variant_view<Variant, Ts...>::operator->() const
-  requires(sizeof...(Ts) == 1)
-{
-  if (invalid()) throw uninitialized_variant_view{};
-  auto res = yk::get<0>(this);
-  if (res == nullptr) throw std::bad_variant_access{};
-  return res;
-}
-
-template <class Variant, class... Ts>
-[[nodiscard]] constexpr auto variant_view<Variant, Ts...>::operator->()
   requires(sizeof...(Ts) == 1)
 {
   if (invalid()) throw uninitialized_variant_view{};
