@@ -209,19 +209,14 @@ template <std::size_t I, class Variant, class... Ts>
 }
 
 template <class T, class VariantView>
-  requires specialization_of<std::remove_const_t<VariantView>, variant_view>
-[[nodiscard]] constexpr auto get(VariantView* view) noexcept {
+  requires specialization_of<VariantView, variant_view>
+[[nodiscard]] constexpr auto get(const VariantView* view) noexcept {
   if (view == nullptr || view->invalid()) return static_cast<decltype(yk::get<T>(&view->base()))>(nullptr);
   return yk::get<T>(&view->base());
 }
 
 template <std::size_t I, class Variant, class... Ts>
 [[nodiscard]] constexpr auto get(const variant_view<Variant, Ts...>* view) noexcept {
-  if (view == nullptr || view->invalid()) return static_cast<decltype(yk::get<pack_indexing_t<I, Ts...>>(&view->base()))>(nullptr);
-  return yk::get<pack_indexing_t<I, Ts...>>(&view->base());
-}
-template <std::size_t I, class Variant, class... Ts>
-[[nodiscard]] constexpr auto get(variant_view<Variant, Ts...>* view) noexcept {
   if (view == nullptr || view->invalid()) return static_cast<decltype(yk::get<pack_indexing_t<I, Ts...>>(&view->base()))>(nullptr);
   return yk::get<pack_indexing_t<I, Ts...>>(&view->base());
 }
