@@ -15,6 +15,8 @@ project(
 
 add_library(variant_view INTERFACE)
 
+add_library(yk::variant_view ALIAS variant_view)
+
 file(GLOB_RECURSE VARIANT_VIEW_HEADERS CONFIGURE_DEPENDS include/*.hpp)
 target_sources(variant_view INTERFACE FILE_SET HEADERS FILES ${VARIANT_VIEW_HEADERS})
 
@@ -39,12 +41,12 @@ endif()
 
 install(
   TARGETS variant_view
-  EXPORT variant_view_export
+  EXPORT variant_view-export
   FILE_SET HEADERS
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 install(
-  EXPORT variant_view_export
+  EXPORT variant_view-export
   FILE variant_viewTargets.cmake
   NAMESPACE yk::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
