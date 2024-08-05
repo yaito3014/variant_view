@@ -6,7 +6,7 @@
 #endif
 
 #if YK_VARIANT_VIEW_INCLUDE_STL
-#include "yk/variant_view/stl.hpp"
+#include "yk/variant_view/std.hpp"
 #endif
 
 #if YK_VARIANT_VIEW_INCLUDE_BOOST
@@ -16,6 +16,7 @@
 #include "yk/util/pack_indexing.hpp"
 #include "yk/variant/traits.hpp"
 #include "yk/variant_view/traits.hpp"
+#include "yk/variant.hpp"
 
 #include <cassert>
 #include <compare>
@@ -156,16 +157,6 @@ private:
 template <class... Ts, class Variant>
 [[nodiscard]] constexpr auto make_variant_view(Variant&& variant) noexcept {
   return make_variant_view_result_t<std::remove_reference_t<Variant>, Ts...>{std::forward<Variant>(variant)};
-}
-
-template <class Visitor, class Variant>
-constexpr decltype(auto) visit(Visitor&& vis, Variant&& variant) {
-  return variant_dispatch<std::remove_cvref_t<Variant>>::apply_visit(std::forward<Visitor>(vis), std::forward<Variant>(variant));
-}
-
-template <class Res, class Visitor, class Variant>
-constexpr Res visit(Visitor&& vis, Variant&& variant) {
-  return variant_dispatch<std::remove_cvref_t<Variant>>::template apply_visit<Res>(std::forward<Visitor>(vis), std::forward<Variant>(variant));
 }
 
 template <class Variant, class... Ts>
