@@ -71,7 +71,7 @@ struct BoundVisitor {
 
   template <class T>
   constexpr decltype(auto) operator()(T&& x) const {
-    return visit(BindBack<Visitor, T>(visitor, {std::forward<T>(x)}), variant);
+    return visit(BindBack<Visitor, T>(std::forward<Visitor>(visitor), {std::forward<T>(x)}), variant);
   }
 
   template <class T>
@@ -87,7 +87,7 @@ struct BoundVisitorWithRet {
 
   template <class T>
   constexpr decltype(auto) operator()(T&& x) const {
-    return visit<Ret>(BindBack<Visitor, T>(visitor, {std::forward<T>(x)}), variant);
+    return visit<Ret>(BindBack<Visitor, T>(std::forward<Visitor>(visitor), {std::forward<T>(x)}), variant);
   }
 
   template <class T>

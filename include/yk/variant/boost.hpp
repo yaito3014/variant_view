@@ -36,7 +36,11 @@ private:
     Visitor vis;
     template <class T>
     constexpr Res operator()(T&& x) const {
-      return std::invoke(vis, std::forward<T>(x));
+      return std::invoke(std::forward<Visitor>(vis), std::forward<T>(x));
+    }
+    template <class T>
+    constexpr Res operator()(T&& x) {
+      return std::invoke(std::forward<Visitor>(vis), std::forward<T>(x));
     }
   };
 
