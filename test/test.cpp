@@ -454,15 +454,15 @@ BOOST_AUTO_TEST_CASE(MultiVisit) {
 
   yk::visit(
       [](auto&& x, auto&& y) {
-        static_assert(std::is_same_v<decltype(x), int&>);
-        static_assert(std::is_same_v<decltype(y), double&>);
+        BOOST_TEST((typeid(decltype(x)) == typeid(int)));
+        BOOST_TEST((typeid(decltype(y)) == typeid(double)));
       },
       stdVariant, boostVariant);
 
   yk::visit(
       [](auto&& x, auto&& y) mutable {
-        static_assert(std::is_same_v<decltype(x), int&>);
-        static_assert(std::is_same_v<decltype(y), double&>);
+        BOOST_TEST((typeid(decltype(x)) == typeid(int)));
+        BOOST_TEST((typeid(decltype(y)) == typeid(double)));
       },
       stdVariant, boostVariant);
 }

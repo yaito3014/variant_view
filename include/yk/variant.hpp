@@ -64,7 +64,10 @@ struct BoundVisitor {
 }  // namespace detail
 
 template <class Visitor, class Variant1, class Variant2, class... Variants>
-constexpr decltype(auto) visit(Visitor&& vis, Variant1&& variant1, Variant2&& variant2, Variants&&... variants) {}
+constexpr decltype(auto) visit(Visitor&& vis, Variant1&& variant1, Variant2&& variant2, Variants&&... variants) {
+  return visit(detail::BoundVisitor<Visitor, Variant1>{std::forward<Visitor>(vis), std::forward<Variant1>(variant1)}, std::forward<Variant2>(variant2),
+               std::forward<Variants>(variants)...);
+}
 
 }  // namespace yk
 
