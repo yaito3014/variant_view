@@ -1,5 +1,5 @@
-#ifndef YK_VARIANT_VIEW_STL_HPP
-#define YK_VARIANT_VIEW_STL_HPP
+#ifndef YK_VARIANT_VIEW_STD_HPP
+#define YK_VARIANT_VIEW_STD_HPP
 
 #include "yk/util/specialization_of.hpp"
 
@@ -44,4 +44,4 @@ variant_view(std::variant<Ts...>&) -> variant_view<std::variant<Ts...>, Ts...>;
 
 }  // namespace yk
 
-#endif  // YK_VARIANT_VIEW_STL_HPP
+#endif  // YK_VARIANT_VIEW_STD_HPP
