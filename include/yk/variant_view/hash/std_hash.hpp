@@ -6,6 +6,8 @@
 #include <functional>
 #include <type_traits>
 
+#include <cstddef>
+
 namespace std {
 
 template <class Variant, class... Ts>

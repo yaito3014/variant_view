@@ -4,8 +4,10 @@
 #include "yk/variant_view.hpp"
 
 #include <boost/functional/hash.hpp>
-#include <cstddef>
+
 #include <type_traits>
+
+#include <cstddef>
 
 namespace yk {
 
