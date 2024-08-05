@@ -448,4 +448,23 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Index, Variant, YK_VARIANT(int, double, std::strin
   BOOST_TEST(yk::make_variant_view<int>(a).index() == yk::make_variant_view<int>(b).index());
 }
 
+BOOST_AUTO_TEST_CASE(MultiVisit) {
+  std::variant<int, double, std::string> stdVariant = 42;
+  boost::variant<int, double, std::string> boostVariant = 3.14;
+
+  yk::visit(
+      [](auto&& x, auto&& y) {
+        static_assert(std::is_same_v<decltype(x), int&>);
+        static_assert(std::is_same_v<decltype(y), double&>);
+      },
+      stdVariant, boostVariant);
+
+  yk::visit(
+      [](auto&& x, auto&& y) mutable {
+        static_assert(std::is_same_v<decltype(x), int&>);
+        static_assert(std::is_same_v<decltype(y), double&>);
+      },
+      stdVariant, boostVariant);
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // variant_view
