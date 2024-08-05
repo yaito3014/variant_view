@@ -1,5 +1,5 @@
-#define YK_VARIANT_VIEW_INCLUDE_STL 1
-#define YK_VARIANT_VIEW_INCLUDE_BOOST 1
+#define YK_VARIANT_INCLUDE_STD 1
+#define YK_VARIANT_INCLUDE_BOOST 1
 #include "yk/util/overloaded.hpp"
 #include "yk/variant/boost/compare.hpp"
 #include "yk/variant_view.hpp"

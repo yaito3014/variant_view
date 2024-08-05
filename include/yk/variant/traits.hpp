@@ -12,7 +12,9 @@ template <class Variant, class T>
 inline constexpr bool is_in_variant_v = is_in_variant<Variant, T>::value;
 
 template <class Variant>
-struct variant_dispatch;
+struct variant_dispatch {
+  static_assert(false, "variant_dispatch is not specialized for this variant");
+};
 
 template <class Variant>
 struct is_variant_like : std::false_type {};

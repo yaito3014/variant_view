@@ -10,6 +10,7 @@
 #include "yk/variant/traits.hpp"
 
 #include "yk/variant_view/traits.hpp"
+#include "yk/variant_view/variant_view.hpp"
 
 #include <compare>
 #include <cstddef>

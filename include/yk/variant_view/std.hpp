@@ -2,9 +2,12 @@
 #define YK_VARIANT_VIEW_STL_HPP
 
 #include "yk/util/specialization_of.hpp"
+
 #include "yk/variant/std.hpp"
 #include "yk/variant/traits.hpp"
+
 #include "yk/variant_view/traits.hpp"
+#include "yk/variant_view/variant_view.hpp"
 
 #include <cstddef>
 #include <type_traits>
@@ -22,7 +25,6 @@ template <class... Ts, class... Us, class T>
 struct is_in_variant_view<variant_view<std::variant<Ts...>, Us...>, T> : std::disjunction<std::is_same<Us, T>...> {
   static_assert((... || std::is_same_v<Ts, T>), "T must be in variant's template parameters");
 };
-
 
 template <class T, class... Ts, class... Us>
 [[nodiscard]] constexpr bool holds_alternative(const variant_view<std::variant<Ts...>, Us...>& v) noexcept {
