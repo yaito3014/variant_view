@@ -465,6 +465,20 @@ BOOST_AUTO_TEST_CASE(MultiVisit) {
         BOOST_TEST((typeid(decltype(y)) == typeid(double)));
       },
       stdVariant, boostVariant);
+
+  yk::visit<void>(
+      [](auto&& x, auto&& y) {
+        BOOST_TEST((typeid(decltype(x)) == typeid(int)));
+        BOOST_TEST((typeid(decltype(y)) == typeid(double)));
+      },
+      stdVariant, boostVariant);
+
+  yk::visit<void>(
+      [](auto&& x, auto&& y) mutable {
+        BOOST_TEST((typeid(decltype(x)) == typeid(int)));
+        BOOST_TEST((typeid(decltype(y)) == typeid(double)));
+      },
+      stdVariant, boostVariant);
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // variant_view

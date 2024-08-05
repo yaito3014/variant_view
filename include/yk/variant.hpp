@@ -61,12 +61,34 @@ struct BoundVisitor {
   }
 };
 
+template <class Ret, class Visitor, class Variant>
+struct BoundVisitorWithRet {
+  Visitor visitor;
+  Variant variant;
+
+  template <class T>
+  constexpr decltype(auto) operator()(T&& x) const {
+    return visit<Ret>(BindBack<Visitor, T>(visitor, {std::forward<T>(x)}), variant);
+  }
+
+  template <class T>
+  constexpr decltype(auto) operator()(T&& x) {
+    return visit<Ret>(BindBack<Visitor, T>(visitor, {std::forward<T>(x)}), variant);
+  }
+};
+
 }  // namespace detail
 
 template <class Visitor, class Variant1, class Variant2, class... Variants>
 constexpr decltype(auto) visit(Visitor&& vis, Variant1&& variant1, Variant2&& variant2, Variants&&... variants) {
   return visit(detail::BoundVisitor<Visitor, Variant1>{std::forward<Visitor>(vis), std::forward<Variant1>(variant1)}, std::forward<Variant2>(variant2),
                std::forward<Variants>(variants)...);
+}
+
+template <class Res, class Visitor, class Variant1, class Variant2, class... Variants>
+constexpr Res visit(Visitor&& vis, Variant1&& variant1, Variant2&& variant2, Variants&&... variants) {
+  return visit<Res>(detail::BoundVisitorWithRet<Res, Visitor, Variant1>{std::forward<Visitor>(vis), std::forward<Variant1>(variant1)},
+                    std::forward<Variant2>(variant2), std::forward<Variants>(variants)...);
 }
 
 }  // namespace yk
