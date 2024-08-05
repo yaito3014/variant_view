@@ -1,15 +1,19 @@
 #ifndef YK_VARIANT_HPP
 #define YK_VARIANT_HPP
 
-#ifndef YK_VARIANT_VIEW_INCLUDE_STL
-#define YK_VARIANT_VIEW_INCLUDE_STL 1
+#ifdef YK_VARIANT_INCLUDE_STL
+#error "did you mean YK_VARIANT_INCLUDE_STD?"
 #endif
 
-#if YK_VARIANT_VIEW_INCLUDE_STL
+#ifndef YK_VARIANT_INCLUDE_STD
+#define YK_VARIANT_INCLUDE_STD 1
+#endif
+
+#if YK_VARIANT_INCLUDE_STD
 #include "yk/variant/std.hpp"
 #endif
 
-#if YK_VARIANT_VIEW_INCLUDE_BOOST
+#if YK_VARIANT_INCLUDE_BOOST
 #include "yk/variant/boost.hpp"
 #endif
 
@@ -52,7 +56,7 @@ struct BoundVisitor {
 
   template <class T>
   constexpr decltype(auto) operator()(T&& x) const {
-    return visit(BindBack<Visitor, T>(std::forward<Visitor>(visitor), {std::forward<T>(x)}), variant);
+    return visit(BindBack<Visitor, T>(visitor, {std::forward<T>(x)}), variant);
   }
 
   template <class T>
@@ -73,7 +77,7 @@ struct BoundVisitorWithRet {
 
   template <class T>
   constexpr decltype(auto) operator()(T&& x) {
-    return visit<Ret>(BindBack<Visitor, T>(visitor, {std::forward<T>(x)}), variant);
+    return visit<Ret>(BindBack<Visitor, T>(std::forward<Visitor>(visitor), {std::forward<T>(x)}), variant);
   }
 };
 

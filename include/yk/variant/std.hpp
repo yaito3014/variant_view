@@ -1,6 +1,7 @@
 #ifndef YK_VARIANT_STD_HPP
 #define YK_VARIANT_STD_HPP
 
+#include "yk/variant.hpp"
 #include "yk/variant/traits.hpp"
 
 #include <type_traits>

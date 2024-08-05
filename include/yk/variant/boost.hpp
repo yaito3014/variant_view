@@ -7,10 +7,12 @@
 #include "yk/util/pack_indexing.hpp"
 #include "yk/util/specialization_of.hpp"
 
+#include "yk/variant.hpp"
 #include "yk/variant/boost/traits.hpp"
 #include "yk/variant/traits.hpp"
 
 #include <type_traits>
+#include <variant>
 
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/fold.hpp>

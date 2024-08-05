@@ -1,11 +1,15 @@
 #ifndef YK_VARIANT_VIEW_HPP
 #define YK_VARIANT_VIEW_HPP
 
-#ifndef YK_VARIANT_VIEW_INCLUDE_STL
-#define YK_VARIANT_VIEW_INCLUDE_STL 1
+#ifdef YK_VARIANT_VIEW_INCLUDE_STL
+#error "did you mean YK_VARIANT_VIEW_INCLUDE_STD?"
 #endif
 
-#if YK_VARIANT_VIEW_INCLUDE_STL
+#ifndef YK_VARIANT_VIEW_INCLUDE_STD
+#define YK_VARIANT_VIEW_INCLUDE_STD 1
+#endif
+
+#if YK_VARIANT_VIEW_INCLUDE_STD
 #include "yk/variant_view/std.hpp"
 #endif
 
@@ -14,9 +18,9 @@
 #endif
 
 #include "yk/util/pack_indexing.hpp"
+#include "yk/variant.hpp"
 #include "yk/variant/traits.hpp"
 #include "yk/variant_view/traits.hpp"
-#include "yk/variant.hpp"
 
 #include <cassert>
 #include <compare>
