@@ -1,6 +1,8 @@
-#define YK_VARIANT_VIEW_INCLUDE_STL 1
-#define YK_VARIANT_VIEW_INCLUDE_BOOST 1
+#define YK_VARIANT_INCLUDE_STD 1
+#define YK_VARIANT_INCLUDE_BOOST 1
 #include "yk/util/overloaded.hpp"
+#include "yk/util/specialization_of.hpp"
+
 #include "yk/variant/boost/compare.hpp"
 #include "yk/variant_view.hpp"
 #include "yk/variant_view/hash.hpp"
@@ -446,6 +448,39 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Index, Variant, YK_VARIANT(int, double, std::strin
     BOOST_TEST(yk::make_variant_view<int>(a).index() == static_cast<std::size_t>(a.which()));
   }
   BOOST_TEST(yk::make_variant_view<int>(a).index() == yk::make_variant_view<int>(b).index());
+}
+
+BOOST_AUTO_TEST_CASE(MultiVisit) {
+  std::variant<int, double, std::string> stdVariant = 42;
+  boost::variant<int, double, std::string> boostVariant = 3.14;
+
+  yk::visit(
+      [](auto&& x, auto&& y) {
+        BOOST_TEST((typeid(decltype(x)) == typeid(int)));
+        BOOST_TEST((typeid(decltype(y)) == typeid(double)));
+      },
+      stdVariant, boostVariant);
+
+  yk::visit(
+      [](auto&& x, auto&& y) mutable {
+        BOOST_TEST((typeid(decltype(x)) == typeid(int)));
+        BOOST_TEST((typeid(decltype(y)) == typeid(double)));
+      },
+      stdVariant, boostVariant);
+
+  yk::visit<void>(
+      [](auto&& x, auto&& y) {
+        BOOST_TEST((typeid(decltype(x)) == typeid(int)));
+        BOOST_TEST((typeid(decltype(y)) == typeid(double)));
+      },
+      stdVariant, boostVariant);
+
+  yk::visit<void>(
+      [](auto&& x, auto&& y) mutable {
+        BOOST_TEST((typeid(decltype(x)) == typeid(int)));
+        BOOST_TEST((typeid(decltype(y)) == typeid(double)));
+      },
+      stdVariant, boostVariant);
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // variant_view

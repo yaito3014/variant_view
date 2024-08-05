@@ -1,30 +1,20 @@
 #ifndef YK_VARIANT_HPP
 #define YK_VARIANT_HPP
 
-#ifndef YK_VARIANT_VIEW_INCLUDE_STL
-#define YK_VARIANT_VIEW_INCLUDE_STL 1
+#ifdef YK_VARIANT_INCLUDE_STL
+#error "did you mean YK_VARIANT_INCLUDE_STD?"
 #endif
 
-#if YK_VARIANT_VIEW_INCLUDE_STL
+#ifndef YK_VARIANT_INCLUDE_STD
+#define YK_VARIANT_INCLUDE_STD 1
+#endif
+
+#if YK_VARIANT_INCLUDE_STD
 #include "yk/variant/std.hpp"
 #endif
 
-#if YK_VARIANT_VIEW_INCLUDE_BOOST
+#if YK_VARIANT_INCLUDE_BOOST
 #include "yk/variant/boost.hpp"
 #endif
-
-namespace yk {
-
-template <class Visitor, class Variant>
-constexpr decltype(auto) visit(Visitor&& vis, Variant&& variant) {
-  return variant_dispatch<std::remove_cvref_t<Variant>>::apply_visit(std::forward<Visitor>(vis), std::forward<Variant>(variant));
-}
-
-template <class Res, class Visitor, class Variant>
-constexpr Res visit(Visitor&& vis, Variant&& variant) {
-  return variant_dispatch<std::remove_cvref_t<Variant>>::template apply_visit<Res>(std::forward<Visitor>(vis), std::forward<Variant>(variant));
-}
-
-}  // namespace yk
 
 #endif  // YK_VARIANT_HPP

@@ -3,11 +3,11 @@
 
 #include "yk/variant_view.hpp"
 
-#if YK_VARIANT_VIEW_INCLUDE_STL
-#include "yk/variant_view/hash/stl_hash.hpp"
+#if YK_VARIANT_INCLUDE_STD
+#include "yk/variant_view/hash/std_hash.hpp"
 #endif
 
-#if YK_VARIANT_VIEW_INCLUDE_BOOST
+#if YK_VARIANT_INCLUDE_BOOST
 #include "yk/variant_view/hash/boost_hash.hpp"
 #endif
 

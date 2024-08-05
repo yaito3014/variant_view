@@ -2,6 +2,7 @@
 #define YK_VARIANT_STD_HPP
 
 #include "yk/variant/traits.hpp"
+#include "yk/variant/variant.hpp"
 
 #include <type_traits>
 #include <variant>
@@ -26,36 +27,32 @@ struct variant_dispatch<std::variant<Ts...>> {
     return std::visit<Res>(std::forward<Visitor>(vis), std::forward<Variant>(variant));
   }
 
+  template <class T, class StdVariant>
+  static constexpr decltype(auto) apply_get(StdVariant&& variant) {
+    return std::get<T>(std::forward<StdVariant>(variant));
+  }
+
+  template <std::size_t I, class StdVariant>
+  static constexpr decltype(auto) apply_get(StdVariant&& variant) {
+    return std::get<I>(std::forward<StdVariant>(variant));
+  }
+
+  template <class T, class StdVariant>
+  static constexpr auto apply_get(StdVariant* variant) noexcept {
+    return std::get_if<T>(variant);
+  }
+
+  template <std::size_t I, class StdVariant>
+  static constexpr auto apply_get(StdVariant* variant) noexcept {
+    return std::get_if<I>(variant);
+  }
+
   static constexpr std::size_t apply_index(const std::variant<Ts...>& var) noexcept { return var.index(); }
 };
 
 template <class T, class... Ts>
 [[nodiscard]] constexpr bool holds_alternative(const std::variant<Ts...>& v) noexcept {
   return std::holds_alternative<T>(v);
-}
-
-template <class T, class StdVariant>
-  requires specialization_of<std::remove_cvref_t<StdVariant>, std::variant>
-[[nodiscard]] constexpr decltype(auto) get(StdVariant&& variant) {
-  return std::get<T>(std::forward<StdVariant>(variant));
-}
-
-template <std::size_t I, class StdVariant>
-  requires specialization_of<std::remove_cvref_t<StdVariant>, std::variant>
-[[nodiscard]] constexpr decltype(auto) get(StdVariant&& variant) {
-  return std::get<I>(std::forward<StdVariant>(variant));
-}
-
-template <class T, class StdVariant>
-  requires specialization_of<std::remove_const_t<StdVariant>, std::variant>
-[[nodiscard]] constexpr auto get(StdVariant* variant) noexcept {
-  return std::get_if<T>(variant);
-}
-
-template <std::size_t I, class StdVariant>
-  requires specialization_of<std::remove_const_t<StdVariant>, std::variant>
-[[nodiscard]] constexpr auto get(StdVariant* variant) noexcept {
-  return std::get_if<I>(variant);
 }
 
 }  // namespace yk
