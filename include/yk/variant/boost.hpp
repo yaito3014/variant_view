@@ -5,7 +5,6 @@
 #include "yk/util/exactly_once.hpp"
 #include "yk/util/find_type_index.hpp"
 #include "yk/util/pack_indexing.hpp"
-#include "yk/util/specialization_of.hpp"
 
 #include "yk/variant/boost/traits.hpp"
 #include "yk/variant/traits.hpp"
@@ -15,7 +14,6 @@
 #include <variant>
 
 #include <boost/mpl/contains.hpp>
-#include <boost/mpl/fold.hpp>
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/get.hpp>
 #include <boost/variant/multivisitors.hpp>

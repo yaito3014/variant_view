@@ -1,8 +1,6 @@
 #ifndef YK_VARIANT_VIEW_STD_HPP
 #define YK_VARIANT_VIEW_STD_HPP
 
-#include "yk/util/specialization_of.hpp"
-
 #include "yk/variant/std.hpp"
 #include "yk/variant/traits.hpp"
 
