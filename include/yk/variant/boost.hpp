@@ -4,6 +4,7 @@
 #include "yk/util/all_same.hpp"
 #include "yk/util/exactly_once.hpp"
 #include "yk/util/find_type_index.hpp"
+#include "yk/util/forward_like.hpp"
 #include "yk/util/pack_indexing.hpp"
 
 #include "yk/variant/boost/traits.hpp"
@@ -48,7 +49,8 @@ public:
   template <class Visitor, class Variant>
   static constexpr decltype(auto) apply_visit(Visitor&& vis, Variant&& variant) {
     []<class... Us>(detail::type_list<Us...>) {
-      static_assert(core::is_all_same_v<std::invoke_result_t<Visitor, Us>...>, "visitor must return same type for all possible parameters");
+      static_assert(core::is_all_same_v<std::invoke_result_t<Visitor, forward_like_t<Variant, Us>>...>,
+                    "visitor must return same type for all possible parameters");
     }(detail::boost_variant_types_t<std::remove_cvref_t<Variant>>{});
     return boost::apply_visitor(std::forward<Visitor>(vis), std::forward<Variant>(variant));
   }
