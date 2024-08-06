@@ -18,7 +18,7 @@ add_library(variant_view INTERFACE)
 add_library(yk::variant_view ALIAS variant_view)
 
 file(GLOB_RECURSE VARIANT_VIEW_HEADERS CONFIGURE_DEPENDS include/*.hpp)
-target_sources(variant_view INTERFACE FILE_SET HEADERS FILES ${VARIANT_VIEW_HEADERS})
+target_sources(variant_view INTERFACE FILE_SET HEADERS BASE_DIRS include FILES ${VARIANT_VIEW_HEADERS})
 
 include(GNUInstallDirs)
 target_include_directories(
