@@ -58,7 +58,7 @@ public:
   template <class Res, class Visitor, class Variant>
   static constexpr Res apply_visit(Visitor&& vis, Variant&& variant) {
     Wrapper<Visitor, Res> wrapper{std::forward<Visitor>(vis)};
-    return std::forward<Variant>(variant).apply_visitor(wrapper);
+    return boost::apply_visitor(wrapper, std::forward<Variant>(variant));
   }
 
   template <class T, class BoostVariant>
