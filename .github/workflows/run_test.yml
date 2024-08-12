@@ -35,7 +35,7 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Install Boost
-      run: apt update && apt-get install libboost-test-dev
+      run: sudo apt update && sudo apt-get install libboost-test-dev
 
     - name: Configure CMake
       run: >
