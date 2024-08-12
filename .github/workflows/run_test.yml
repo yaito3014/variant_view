@@ -32,7 +32,7 @@ jobs:
     - name: Set reusable strings
       id: strings
       shell: bash
-      run: >
+      run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
         echo "cxx-compiler=${{ matrix.compiler.cxx }}-${{ matrix.compiler.ver }}" >> "$GITHUB_OUTPUT"
 
@@ -45,7 +45,7 @@ jobs:
 
     - name: Setup GCC
       if: matrix.compiler.cxx == 'g++'
-      run: sudo apt update && sudo apt install -y gcc-${{ matrix.compiler.ver }}
+      run: sudo apt update && sudo apt install -y g++-${{ matrix.compiler.ver }}
 
     - name: Install Deps
       run: sudo apt update && sudo apt install libboost-test-dev
