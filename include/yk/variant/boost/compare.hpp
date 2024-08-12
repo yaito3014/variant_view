@@ -14,14 +14,20 @@ namespace yk {
 
 namespace detail {
 
+template <class TypeList>
+struct calc_category;
+
+template <class... Ts>
+struct calc_category<type_list<Ts...>> {
+  using type = std::common_comparison_category_t<std::compare_three_way_result_t<Ts>...>;
+};
+
 template <class Variant>
 struct compare_impl;
 
 template <class... Ts>
 struct compare_impl<boost::variant<Ts...>> {
-  using category_t = typename decltype([]<class... Us>(detail::type_list<Us...>) {
-    return type_list<std::common_comparison_category_t<std::compare_three_way_result_t<Us>...>>{};
-  }(detail::boost_variant_types_t<boost::variant<Ts...>>{}))::head;
+  using category_t = typename calc_category<detail::boost_variant_types_t<boost::variant<Ts...>>>::type;
 
   [[nodiscard]] static constexpr category_t apply(const boost::variant<Ts...>& lhs, const boost::variant<Ts...>& rhs) {
     if (lhs.which() != rhs.which()) return lhs.which() <=> rhs.which();
