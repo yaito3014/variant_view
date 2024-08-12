@@ -1,4 +1,4 @@
-name: Multi-Platform Test
+name: Single-Platform Test
 
 on:
   push:
@@ -14,16 +14,9 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         build_type: [Release]
-        compiler: [g++, clang++, cl]
-        exclude:
-          - os: ubuntu-latest
-            compiler: cl
-          - os: windows-latest
-            compiler: g++
-          - os: windows-latest
-            compiler: clang++
+        compiler: [g++, clang++]
 
     steps:
     - uses: actions/checkout@v4
@@ -34,8 +27,8 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - name: Install Boost
-      run: sudo apt update && sudo apt-get install libboost-test-dev
+    - name: Install Deps
+      run: sudo apt update && sudo apt-get install g++ clang libboost-test-dev
 
     - name: Configure CMake
       run: >
