@@ -1,6 +1,8 @@
 #ifndef YK_VARIANT_TRAITS_HPP
 #define YK_VARIANT_TRAITS_HPP
 
+#include "yk/util/always_false.hpp"
+
 #include <type_traits>
 
 namespace yk {
@@ -13,7 +15,7 @@ inline constexpr bool is_in_variant_v = is_in_variant<Variant, T>::value;
 
 template <class Variant>
 struct variant_dispatch {
-  static_assert(false, "variant_dispatch is not specialized for this variant");
+  static_assert(core::always_false_v<Variant>, "variant_dispatch is not specialized for this variant");
 };
 
 template <class Variant>

@@ -1,6 +1,7 @@
 #ifndef YK_VARIANT_BOOST_COMPARE_HPP
 #define YK_VARIANT_BOOST_COMPARE_HPP
 
+#include "yk/util/always_false.hpp"
 #include "yk/variant/boost/traits.hpp"
 
 #include <boost/variant/variant.hpp>
@@ -34,7 +35,7 @@ struct compare_impl<boost::variant<Ts...>> {
         } else if constexpr (std::same_as<category_t, std::partial_ordering>) {
           return std::compare_partial_order_fallback(a, b);
         } else {
-          static_assert(false, "unrecognized ordering");
+          static_assert(core::always_false_v<category_t>, "unrecognized ordering");
         }
       } else {
         return category_t::equivalent;  // unreachable
