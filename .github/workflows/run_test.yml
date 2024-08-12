@@ -48,5 +48,5 @@ jobs:
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target test
 
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+      working-directory: ${{ steps.strings.outputs.build-output-dir }}/test
       run: ctest --build-config ${{ matrix.build_type }}
