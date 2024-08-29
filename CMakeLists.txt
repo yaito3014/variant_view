@@ -56,8 +56,10 @@ install(
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
 )
 
-if(Boost_unit_test_framework_FOUND AND YK_BUILD_TESTING)
-  add_subdirectory(test EXCLUDE_FROM_ALL)
-else()
-  message(STATUS "Boost.Test is not found, not building tests")
+if(YK_BUILD_TESTING)
+  if(Boost_unit_test_framework_FOUND)
+    add_subdirectory(test EXCLUDE_FROM_ALL)
+  else()
+    message(STATUS "Boost.Test is not found, not building tests")
+  endif()
 endif()
