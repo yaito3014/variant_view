@@ -13,12 +13,16 @@ project(
   LANGUAGES CXX
 )
 
+option(YK_VARIANT_VIEW_BUILD_TESTING "build tests" ${PROJECT_IS_TOP_LEVEL})
+
 add_library(variant_view INTERFACE)
 
 add_library(yk::variant_view ALIAS variant_view)
 
 file(GLOB_RECURSE VARIANT_VIEW_HEADERS CONFIGURE_DEPENDS include/*.hpp)
-target_sources(variant_view INTERFACE FILE_SET HEADERS BASE_DIRS include FILES ${VARIANT_VIEW_HEADERS})
+target_sources(
+  variant_view INTERFACE FILE_SET HEADERS BASE_DIRS include FILES ${VARIANT_VIEW_HEADERS}
+)
 
 include(GNUInstallDirs)
 target_include_directories(
@@ -52,8 +56,10 @@ install(
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
 )
 
-if(${Boost_unit_test_framework_FOUND})
-  add_subdirectory(test EXCLUDE_FROM_ALL)
-else()
-  message(STATUS "Boost.Test is not found, not building tests")
+if(YK_VARIANT_VIEW_BUILD_TESTING)
+  if(Boost_unit_test_framework_FOUND)
+    add_subdirectory(test EXCLUDE_FROM_ALL)
+  else()
+    message(STATUS "Boost.Test is not found, not building tests")
+  endif()
 endif()
