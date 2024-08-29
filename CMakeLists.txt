@@ -13,7 +13,7 @@ project(
   LANGUAGES CXX
 )
 
-option(YK_BUILD_TESTING "build tests" ${PROJECT_IS_TOP_LEVEL})
+option(YK_VARIANT_VIEW_BUILD_TESTING "build tests" ${PROJECT_IS_TOP_LEVEL})
 
 add_library(variant_view INTERFACE)
 
@@ -56,7 +56,7 @@ install(
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
 )
 
-if(YK_BUILD_TESTING)
+if(YK_VARIANT_VIEW_BUILD_TESTING)
   if(Boost_unit_test_framework_FOUND)
     add_subdirectory(test EXCLUDE_FROM_ALL)
   else()
